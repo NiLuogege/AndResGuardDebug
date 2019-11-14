@@ -66,6 +66,7 @@ public class StringBlock {
    * @throws IOException ioexcetpion
    */
   public static StringBlock read(ExtDataInput reader) throws IOException {
+    //跳过RES_STRING_POOL_TYPE 和 头大小 这俩加起来就是 CHUNK_STRINGPOOL_TYPE 的值
     reader.skipCheckChunkTypeInt(CHUNK_STRINGPOOL_TYPE, CHUNK_NULL_TYPE);
     int chunkSize = reader.readInt();
     int stringCount = reader.readInt();
