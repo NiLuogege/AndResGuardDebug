@@ -1,2 +1,2 @@
 # AndResGuardDebug
-用于调试和debug AndResGuard 库的 项目
+就是AndResGuard的源码只不过加上了自己的调试信息和debug入口，方便我们阅读源码
