@@ -102,6 +102,7 @@ public class StringBlock {
 
 
         if (styleCount != 0) {
+            //获取字符串样式偏移数组
             block.m_styleOffsets = reader.readIntArray(styleCount);
         }
         {
@@ -110,15 +111,22 @@ public class StringBlock {
             if ((size % 4) != 0) {
                 throw new IOException("String data size is not multiple of 4 (" + size + ").");
             }
-            block.m_strings = new byte[size];
 
+            //创建 存储字符串的数组,并填满
+            block.m_strings = new byte[size];
             reader.readFully(block.m_strings);
+
+//            for (int i = 0; i < size; i++) {
+//                System.out.print(block.m_strings[i] + "\n");
+//            }
         }
         if (stylesOffset != 0) {
             int size = (chunkSize - stylesOffset);
             if ((size % 4) != 0) {
                 throw new IOException("Style data size is not multiple of 4 (" + size + ").");
             }
+
+            //创建 存储字符串样式的数组,并填满
             block.m_styles = reader.readIntArray(size / 4);
         }
         return block;
