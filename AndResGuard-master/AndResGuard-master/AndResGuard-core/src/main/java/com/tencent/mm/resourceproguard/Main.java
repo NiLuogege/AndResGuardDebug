@@ -138,7 +138,7 @@ public class Main {
     if (outputFile == null) {
       mOutDir = new File(mRunningLocation, apkFile.getName().substring(0, apkFile.getName().indexOf(".apk")));
     } else {
-      mOutDir = outputFile;
+      mOutDir = outputFile;//mOutDir = "E:/111work/code/code_me/demo/app/build/outputs/apk/release/AndResGuard_app-release"
     }
     decoder.setOutDir(mOutDir.getAbsoluteFile());
     decoder.decode();

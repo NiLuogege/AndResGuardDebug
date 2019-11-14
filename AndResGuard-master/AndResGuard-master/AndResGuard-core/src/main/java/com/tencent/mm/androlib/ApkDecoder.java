@@ -78,7 +78,7 @@ public class ApkDecoder {
 
   public boolean hasResources() throws AndrolibException {
     try {
-      return apkFile.getDirectory().containsFile("resources.arsc");
+      return apkFile.getDirectory().containsFile("resources.arsc");//apkFile="E:/111work/code//code_me/demo/release/app-release.apk"
     } catch (DirectoryException ex) {
       throw new AndrolibException(ex);
     }
@@ -86,11 +86,11 @@ public class ApkDecoder {
 
   private void ensureFilePath() throws IOException {
     //清空输出目录
-    Utils.cleanDir(mOutDir);
+    Utils.cleanDir(mOutDir);//mOutDir = "E:/111work/code/code_me/demo/app/build/outputs/apk/release/AndResGuard_app-release"
 
-    String unZipDest = new File(mOutDir, TypedValue.UNZIP_FILE_PATH).getAbsolutePath();
+    String unZipDest = new File(mOutDir, TypedValue.UNZIP_FILE_PATH).getAbsolutePath();//mOutDir = "E:/111work/code/code_me/demo/app/build/outputs/apk/release/AndResGuard_app-release/temp"
     System.out.printf("unziping apk to %s\n", unZipDest);
-    //解压apk到temp文件夹
+    //解压apk到temp文件夹 并将apk中的所有文件明和压缩方式map到mCompressData
     mCompressData = FileOperation.unZipAPk(apkFile.getAbsoluteFile().getAbsolutePath(), unZipDest);
     //根据config来修改压缩的值
     dealWithCompressConfig();
@@ -205,6 +205,8 @@ public class ApkDecoder {
   }
 
   public void decode() throws AndrolibException, IOException, DirectoryException {
+    System.out.println("method decode");
+
     //apk中是否包含resources.arsc 文件
     if (hasResources()) {
       ensureFilePath();

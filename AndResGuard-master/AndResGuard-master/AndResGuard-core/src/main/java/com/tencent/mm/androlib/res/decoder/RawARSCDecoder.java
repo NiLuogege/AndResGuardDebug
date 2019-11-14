@@ -67,6 +67,7 @@ public class RawARSCDecoder {
   }
 
   public static ResPackage[] decode(InputStream arscStream) throws AndrolibException {
+    System.out.println("method RawARSCDecoder--》decode");
     try {
       RawARSCDecoder decoder = new RawARSCDecoder(arscStream);
       System.out.printf("parse to get the exist names in the resouces.arsc first\n");

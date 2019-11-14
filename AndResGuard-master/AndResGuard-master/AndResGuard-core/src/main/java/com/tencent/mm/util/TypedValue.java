@@ -40,9 +40,9 @@ public class TypedValue {
 
   public static final String MERGE_DUPLICATED_RES_MAPPING_FILE = "merge_duplicated_res_mapping_";
 
-  public static final int ZIP_STORED = ZipEntry.STORED;
+  public static final int ZIP_STORED = ZipEntry.STORED;//基本不压缩
 
-  public static final int ZIP_DEFLATED = ZipEntry.DEFLATED;
+  public static final int ZIP_DEFLATED = ZipEntry.DEFLATED;//压缩
 
   public static final int JDK_6 = 6;
 
