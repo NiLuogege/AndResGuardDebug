@@ -82,7 +82,9 @@ public class RawARSCDecoder {
   }
 
   private ResPackage[] readTable() throws IOException, AndrolibException {
+    //解析头部信息 RES_TABLE_TYPE,头大小,文件大小
     nextChunkCheckType(Header.TYPE_TABLE);
+    //解析 package数
     int packageCount = mIn.readInt();
     StringBlock.read(mIn);
     ResPackage[] packages = new ResPackage[packageCount];
