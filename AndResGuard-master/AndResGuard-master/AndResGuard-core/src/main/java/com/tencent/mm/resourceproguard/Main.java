@@ -35,14 +35,18 @@ public class Main {
   protected File mOutDir;
 
   public static void gradleRun(InputParam inputParam) {
+    System.out.println("method gradleRun");
     Main m = new Main();
     m.run(inputParam);
   }
 
   private void run(InputParam inputParam) {
+    System.out.println("method run");
     synchronized (Main.class) {
     //将gradle中的设置加载到配置中
       loadConfigFromGradle(inputParam);
+      System.out.println("将gradle中的配置加载到Configuration中");
+
       this.mFinalApkBackPath = inputParam.finalApkBackupPath;
       Thread currentThread = Thread.currentThread();
       System.out.printf(
@@ -103,6 +107,8 @@ public class Main {
    */
   protected void resourceProguard(
       File outputDir, File outputFile, String apkFilePath, InputParam.SignatureType signatureType, int minSDKVersoin) {
+    System.out.println("method resourceProguard");
+
     File apkFile = new File(apkFilePath);
     if (!apkFile.exists()) {
       System.err.printf("The input apk %s does not exist", apkFile.getAbsolutePath());
@@ -111,6 +117,8 @@ public class Main {
 
     //获取输入文件大小
     mRawApkSize = FileOperation.getFileSizes(apkFile);
+    System.out.printf("原始APk大小= %s byte \n",mRawApkSize);
+
     try {
       ApkDecoder decoder = new ApkDecoder(config, apkFile);
       //解码资源文件
@@ -125,6 +133,8 @@ public class Main {
 
   private void decodeResource(File outputFile, ApkDecoder decoder, File apkFile)
       throws AndrolibException, IOException, DirectoryException {
+    System.out.println("method decodeResource");
+
     if (outputFile == null) {
       mOutDir = new File(mRunningLocation, apkFile.getName().substring(0, apkFile.getName().indexOf(".apk")));
     } else {
