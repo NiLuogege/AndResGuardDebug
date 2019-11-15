@@ -35,21 +35,21 @@ public class ParseResourceMain {
 			return;
 		}
 		
-		System.out.println("parse restable header...");
-		ParseResourceUtils.parseResTableHeaderChunk(srcByte);
-		System.out.println("++++++++++++++++++++++++++++++++++++++");
-		System.out.println();
-		
-		System.out.println("parse resstring pool chunk...");
-		ParseResourceUtils.parseResStringPoolChunk(srcByte);
-		System.out.println("++++++++++++++++++++++++++++++++++++++");
-		System.out.println();
-		
-//		System.out.println("parse package chunk...");
-//		ParseResourceUtils.parsePackage(srcByte);
+//		System.out.println("parse restable header...");
+//		ParseResourceUtils.parseResTableHeaderChunk(srcByte);
 //		System.out.println("++++++++++++++++++++++++++++++++++++++");
 //		System.out.println();
 //
+//		System.out.println("parse resstring pool chunk...");
+//		ParseResourceUtils.parseResStringPoolChunk(srcByte);
+//		System.out.println("++++++++++++++++++++++++++++++++++++++");
+//		System.out.println();
+		
+		System.out.println("parse package chunk...");
+		ParseResourceUtils.parsePackage(srcByte);
+		System.out.println("++++++++++++++++++++++++++++++++++++++");
+		System.out.println();
+
 //		System.out.println("parse typestring pool chunk...");
 //		ParseResourceUtils.parseTypeStringPoolChunk(srcByte);
 //		System.out.println("++++++++++++++++++++++++++++++++++++++");
@@ -59,24 +59,24 @@ public class ParseResourceMain {
 //		ParseResourceUtils.parseKeyStringPoolChunk(srcByte);
 //		System.out.println("++++++++++++++++++++++++++++++++++++++");
 //		System.out.println();
-//
-		int resCount = 0;
-		while(!ParseResourceUtils.isEnd(srcByte.length)){
-			resCount++;
-			boolean isSpec = ParseResourceUtils.isTypeSpec(srcByte);
-			if(isSpec){
-				System.out.println("parse restype spec chunk...");
-				ParseResourceUtils.parseResTypeSpec(srcByte);
-				System.out.println("++++++++++++++++++++++++++++++++++++++");
-				System.out.println();
-			}else{
-				System.out.println("parse restype info chunk...");
-				ParseResourceUtils.parseResTypeInfo(srcByte);
-				System.out.println("++++++++++++++++++++++++++++++++++++++");
-				System.out.println();
-			}
-		}
-		System.out.println("res count:"+resCount);
+
+//		int resCount = 0;
+//		while(!ParseResourceUtils.isEnd(srcByte.length)){
+//			resCount++;
+//			boolean isSpec = ParseResourceUtils.isTypeSpec(srcByte);
+//			if(isSpec){
+//				System.out.println("parse restype spec chunk...");
+//				ParseResourceUtils.parseResTypeSpec(srcByte);
+//				System.out.println("++++++++++++++++++++++++++++++++++++++");
+//				System.out.println();
+//			}else{
+//				System.out.println("parse restype info chunk...");
+//				ParseResourceUtils.parseResTypeInfo(srcByte);
+//				System.out.println("++++++++++++++++++++++++++++++++++++++");
+//				System.out.println();
+//			}
+//		}
+//		System.out.println("res count:"+resCount);
 		
 	}
 
