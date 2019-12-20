@@ -171,6 +171,7 @@ public class FileOperation {
         if (compatibaleresult.contains("\\")) {
           compatibaleresult = compatibaleresult.replace("\\", "/");
         }
+//        System.out.println("compatibaleresult= "+compatibaleresult+" Method= "+entry.getMethod());
         compress.put(compatibaleresult, entry.getMethod());
         FileOutputStream fos = new FileOutputStream(file);
         BufferedOutputStream bos = new BufferedOutputStream(fos, BUFFER);

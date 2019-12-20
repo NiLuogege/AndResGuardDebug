@@ -14,6 +14,9 @@ public class Entry {
 
         ArrayList<String> whiteListFullName = new ArrayList<>();
         ArrayList<String> compressFilePattern = new ArrayList<>();
+        compressFilePattern.add("*.png");
+        compressFilePattern.add("*.jpg");
+        compressFilePattern.add("*.gif");
 
         InputParam.Builder builder = new InputParam.Builder()
                 .setWhiteList(whiteListFullName)
