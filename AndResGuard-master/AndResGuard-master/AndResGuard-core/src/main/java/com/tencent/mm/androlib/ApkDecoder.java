@@ -92,7 +92,7 @@ public class ApkDecoder {
     System.out.printf("unziping apk to %s\n", unZipDest);
     //解压apk到temp文件夹 并将apk中的所有文件明和压缩方式map到mCompressData
     mCompressData = FileOperation.unZipAPk(apkFile.getAbsoluteFile().getAbsolutePath(), unZipDest);
-    //根据config来修改压缩的值
+    //根据config来修改文件压缩配置
     dealWithCompressConfig();
     //将res混淆成r(创建存储资源文件的文件夹r或者res)
     //如果mKeepRoot为true，会keep住所有资源的原始路径，只混淆资源的名字（如：res/anim/a.xml）和 arsc name列
@@ -147,7 +147,7 @@ public class ApkDecoder {
    * 根据config来修改压缩的值
    */
   private void dealWithCompressConfig() {
-    //如果有需要压缩的文件，遍历配置将配置的文件类型和压缩质量保存到 mCompressData 中
+    //如果有需要压缩的文件，将文件设置为压缩格式
     if (config.mUseCompress) {
       HashSet<Pattern> patterns = config.mCompressPatterns;
       if (!patterns.isEmpty()) {
@@ -209,6 +209,8 @@ public class ApkDecoder {
 
     //apk中是否包含resources.arsc 文件
     if (hasResources()) {
+
+      //创建后续需要使用的文件及文件夹，以及修改压缩配置
       ensureFilePath();
 
       System.out.printf("decoding resources.arsc\n");

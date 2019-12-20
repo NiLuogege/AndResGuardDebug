@@ -1103,6 +1103,9 @@ public class ARSCDecoder {
     }
   }
 
+  /**
+   * 混淆名称生成的地方
+   */
   private class ResguardStringBuilder {
     private final List<String> mReplaceStringBuffer;
     private final Set<Integer> mIsReplaced;
