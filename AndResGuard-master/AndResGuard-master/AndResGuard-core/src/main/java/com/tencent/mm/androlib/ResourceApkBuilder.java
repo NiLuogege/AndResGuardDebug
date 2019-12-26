@@ -359,7 +359,7 @@ public class ResourceApkBuilder {
     if (metaFiles != null) {
       for (File metaFile : metaFiles) {
         String metaFileName = metaFile.getName();
-        // Ignore signature files
+        // Ignore signature files 忽略签名文件
         if (!metaFileName.endsWith(".MF") && !metaFileName.endsWith(".RSA") && !metaFileName.endsWith(".SF")) {
           System.out.println(String.format("add meta file %s", metaFile.getAbsolutePath()));
           collectFiles.add(metaFile);
