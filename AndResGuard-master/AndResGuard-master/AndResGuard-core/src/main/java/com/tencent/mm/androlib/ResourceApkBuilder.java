@@ -135,12 +135,13 @@ public class ResourceApkBuilder {
       ));
     }
     System.out.printf("use 7zip to repackage: %s, will cost much more time\n", outputAPK.getName());
+    //将签名的apk解压到 out_7zip文件夹中
     FileOperation.unZipAPk(originalAPK.getAbsolutePath(), m7zipOutPutDir.getAbsolutePath());
     //首先一次性生成一个全部都是压缩的安装包 outputAPK=.._signed_7zip.apk
     generalRaw7zip(outputAPK);
 
     ArrayList<String> storedFiles = new ArrayList<>();
-    //对于不压缩的要update回去
+    //对于不压缩的要update回去(遍历out_7zip中的文件将不压缩的文件 写入storedFiles中)
     for (String name : compressData.keySet()) {
       File file = new File(m7zipOutPutDir.getAbsolutePath(), name);
       if (!file.exists()) {
@@ -368,6 +369,13 @@ public class ResourceApkBuilder {
     }
   }
 
+  /**
+   *
+   * @param storedFiles 不需要压缩的文件集合
+   * @param outSevenZipAPK 7zip后需要生成的apk文件
+   * @throws IOException
+   * @throws InterruptedException
+   */
   private void addStoredFileIn7Zip(ArrayList<String> storedFiles, File outSevenZipAPK)
       throws IOException, InterruptedException {
     System.out.printf("[addStoredFileIn7Zip]rewrite the stored file into the 7zip, file count: %d\n",
@@ -376,11 +384,13 @@ public class ResourceApkBuilder {
     if (storedFiles.size() == 0) return;
     String storedParentName = mOutDir.getAbsolutePath() + File.separator + "storefiles" + File.separator;
     String outputName = m7zipOutPutDir.getAbsolutePath() + File.separator;
+    //将不需要压缩的文件 写入 storefiles 文件夹中
     for (String name : storedFiles) {
       FileOperation.copyFileUsingStream(new File(outputName + name), new File(storedParentName + name));
     }
     storedParentName = storedParentName + File.separator + "*";
     String cmd = Utils.isPresent(config.m7zipPath) ? config.m7zipPath : TypedValue.COMMAND_7ZIP;
+    //将_signed_7zip.apk中不需要压缩的文件（storefiles 文件夹中记录的）还原为不压缩
     Utils.runCmd(cmd, "a", "-tzip", outSevenZipAPK.getAbsolutePath(), storedParentName, "-mx0");
   }
 
@@ -388,6 +398,7 @@ public class ResourceApkBuilder {
     String outPath = m7zipOutPutDir.getAbsoluteFile().getAbsolutePath();
     String path = outPath + File.separator + "*";
     String cmd = Utils.isPresent(config.m7zipPath) ? config.m7zipPath : TypedValue.COMMAND_7ZIP;
+    //7zip压缩 out_7zip 下所有的文件 并生成 .._signed_7zip.apk
     Utils.runCmd(cmd, "a", "-tzip", outSevenZipApk.getAbsolutePath(), path, "-mx9");
   }
 }
