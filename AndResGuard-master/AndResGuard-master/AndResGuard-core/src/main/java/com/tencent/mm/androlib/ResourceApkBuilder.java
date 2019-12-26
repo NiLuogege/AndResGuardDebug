@@ -136,7 +136,7 @@ public class ResourceApkBuilder {
     }
     System.out.printf("use 7zip to repackage: %s, will cost much more time\n", outputAPK.getName());
     FileOperation.unZipAPk(originalAPK.getAbsolutePath(), m7zipOutPutDir.getAbsolutePath());
-    //首先一次性生成一个全部都是压缩的安装包
+    //首先一次性生成一个全部都是压缩的安装包 outputAPK=.._signed_7zip.apk
     generalRaw7zip(outputAPK);
 
     ArrayList<String> storedFiles = new ArrayList<>();

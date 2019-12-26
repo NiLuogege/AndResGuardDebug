@@ -40,7 +40,7 @@ public class Entry {
                 .setKeypass("testres")
                 .setStorealias("testres")
                 .setStorepass("testres");
-        builder.setSignatureType(InputParam.SignatureType.SchemaV2);
+        builder.setSignatureType(InputParam.SignatureType.SchemaV1);
 
 
         //配置InputParam 并传入 Main的 gradleRun 方法
