@@ -13,6 +13,8 @@ public class Entry {
     public static void main(String[] args) {
 
         ArrayList<String> whiteListFullName = new ArrayList<>();
+        whiteListFullName.add("cn.xianghuanji.demo_andresguard.R.mipmap.ic_launcher");
+
         ArrayList<String> compressFilePattern = new ArrayList<>();
         compressFilePattern.add("*.png");
         compressFilePattern.add("*.jpg");
