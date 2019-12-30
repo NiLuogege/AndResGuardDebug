@@ -126,7 +126,7 @@ public class ParseResourceUtils {
      * @param src
      */
     public static void parseTypeStringPoolChunk(byte[] src) {
-        System.out.println("typestring offset:" + Utils.bytesToHexString(Utils.int2Byte(typeStringPoolChunkOffset)));
+        System.out.println("typestring offset:" + Utils.bytesToHexString(Utils.int2Byte(typeStringPoolChunkOffset))+"int= "+typeStringPoolChunkOffset);
         ResStringPoolHeader stringPoolHeader = parseStringPoolChunk(src, typeStringList, typeStringPoolChunkOffset);
         System.out.println("size:" + stringPoolHeader.header.size);
     }
@@ -137,7 +137,7 @@ public class ParseResourceUtils {
      * @param src
      */
     public static void parseKeyStringPoolChunk(byte[] src) {
-        System.out.println("keystring offset:" + Utils.bytesToHexString(Utils.int2Byte(keyStringPoolChunkOffset)));
+        System.out.println("keystring offset:" + Utils.bytesToHexString(Utils.int2Byte(keyStringPoolChunkOffset))+" int= "+keyStringPoolChunkOffset);
         ResStringPoolHeader stringPoolHeader = parseStringPoolChunk(src, keyStringList, keyStringPoolChunkOffset);
         System.out.println("size:" + stringPoolHeader.header.size);
         //解析完key字符串之后，需要赋值给resType的偏移值,后续还需要继续解析
