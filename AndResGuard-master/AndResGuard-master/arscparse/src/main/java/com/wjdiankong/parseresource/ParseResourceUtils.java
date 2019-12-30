@@ -519,6 +519,7 @@ public class ParseResourceUtils {
 		for(int i=0;i<stringPoolHeader.stringCount;i++){
 			//因为是索引所以每个 占四个byte
 			stringIndexAry[i] = Utils.byte2int(Utils.copyByte(src, stringIndex+i*4, 4));
+//			System.out.println("string index ="+stringIndexAry[i]);
 		}
 		
 		int styleIndex = stringIndex + 4*stringPoolHeader.stringCount;
