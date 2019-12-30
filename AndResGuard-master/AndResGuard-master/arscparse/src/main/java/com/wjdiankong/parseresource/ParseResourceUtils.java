@@ -150,7 +150,7 @@ public class ParseResourceUtils {
      * @param src
      */
     public static void parseResTypeSpec(byte[] src) {
-        System.out.println("res type spec offset:" + Utils.bytesToHexString(Utils.int2Byte(resTypeOffset)));
+        System.out.println("res type spec offset:" + Utils.bytesToHexString(Utils.int2Byte(resTypeOffset))+" int= "+resTypeOffset);
         ResTableTypeSpec typeSpec = new ResTableTypeSpec();
         //解析头部信息
         typeSpec.header = parseResChunkHeader(src, resTypeOffset);
@@ -161,6 +161,8 @@ public class ParseResourceUtils {
         byte[] idByte = Utils.copyByte(src, offset, 1);
         typeSpec.id = (byte) (idByte[0] & 0xFF);
         resTypeId = typeSpec.id;
+
+        System.out.println("resTypeId:" + resTypeId);
 
         //解析res0字段,这个字段是备用的，始终是0
         byte[] res0Byte = Utils.copyByte(src, offset + 1, 1);
