@@ -42,12 +42,15 @@ public class ParseResourceUtils {
 		ResTableHeader resTableHeader = new ResTableHeader();
 		
 		resTableHeader.header = parseResChunkHeader(src, 0);
-		
+
+		//字符串池的偏移值
 		resStringPoolChunkOffset = resTableHeader.header.headerSize;
 		
 		//解析PackageCount个数(一个apk可能包含多个Package资源)
 		byte[] packageCountByte = Utils.copyByte(src, resTableHeader.header.getHeaderSize(), 4);
 		resTableHeader.packageCount = Utils.byte2int(packageCountByte);
+
+		System.out.println("restable header = "+resTableHeader.toString());
 		
 	}
 	
@@ -462,6 +465,9 @@ public class ParseResourceUtils {
 	}
 	
 	/**
+	 *
+	 * 这个解析代码只做了utf-8的处理
+	 *
 	 * 统一解析字符串内容
 	 * @param src
 	 * @param stringList
@@ -489,18 +495,18 @@ public class ParseResourceUtils {
 		
 		//这里表示字符串的格式:UTF-8/UTF-16
 		byte[] flagByte = Utils.copyByte(src, offset+8, 4);
-		System.out.println("flag:"+Utils.bytesToHexString(flagByte));
 		stringPoolHeader.flags = Utils.byte2int(flagByte);
-		
+		System.out.println("flag:"+Utils.bytesToHexString(flagByte)+" int= "+stringPoolHeader.flags);
+
 		//字符串内容的开始位置
 		byte[] stringStartByte = Utils.copyByte(src, offset+12, 4);
 		stringPoolHeader.stringsStart = Utils.byte2int(stringStartByte);
-		System.out.println("string start:"+Utils.bytesToHexString(stringStartByte));
+		System.out.println("string start:"+Utils.bytesToHexString(stringStartByte)+" int= "+stringPoolHeader.stringsStart);
 		
 		//样式内容的开始位置
 		byte[] sytleStartByte = Utils.copyByte(src, offset+16, 4);
 		stringPoolHeader.stylesStart = Utils.byte2int(sytleStartByte);
-		System.out.println("style start:"+Utils.bytesToHexString(sytleStartByte));
+		System.out.println("style start:"+Utils.bytesToHexString(sytleStartByte)+" int= "+stringPoolHeader.stylesStart);
 		
 		//获取字符串内容的索引数组和样式内容的索引数组
 		int[] stringIndexAry = new int[stringPoolHeader.stringCount];
@@ -511,6 +517,7 @@ public class ParseResourceUtils {
 		
 		int stringIndex = offset + 20;
 		for(int i=0;i<stringPoolHeader.stringCount;i++){
+			//因为是索引所以每个 占四个byte
 			stringIndexAry[i] = Utils.byte2int(Utils.copyByte(src, stringIndex+i*4, 4));
 		}
 		
@@ -522,10 +529,11 @@ public class ParseResourceUtils {
 		//每个字符串的头两个字节的最后一个字节是字符串的长度
 		//这里获取所有字符串的内容
 		int stringContentIndex = styleIndex + stringPoolHeader.styleCount*4;
-		System.out.println("string index:"+Utils.bytesToHexString(Utils.int2Byte(stringContentIndex)));
+		System.out.println("string index:"+Utils.bytesToHexString(Utils.int2Byte(stringContentIndex))+" int= "+stringContentIndex);
 		int index = 0;
 		while(index < stringPoolHeader.stringCount){
 			byte[] stringSizeByte = Utils.copyByte(src, stringContentIndex, 2);
+			//(& 0x7F)是将byte转为int
 			int stringSize = (stringSizeByte[1] & 0x7F);
 			if(stringSize != 0){
 				String val = "";
@@ -538,6 +546,8 @@ public class ParseResourceUtils {
 			}else{
 				stringList.add("");
 			}
+			//这里+3，是因为 字符串前面有两个字节是 是标识字符串长度，
+			// 字符串后边如果编码方式是utf-8 的话会有0x00 的结尾，所以如果编码方式是utf-16的话 那就应该+4了
 			stringContentIndex += (stringSize+3);
 			index++;
 		}
