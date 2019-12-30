@@ -182,6 +182,7 @@ public class ParseResourceUtils {
 
         //获取entryCount个int数组
         int[] intAry = new int[typeSpec.entryCount];
+        //intAryOffset=resTypeOffset+16
         int intAryOffset = resTypeOffset + typeSpec.header.headerSize;
         System.out.print("int element:");
         for (int i = 0; i < typeSpec.entryCount; i++) {
@@ -201,7 +202,7 @@ public class ParseResourceUtils {
      * @param src
      */
     public static void parseResTypeInfo(byte[] src) {
-        System.out.println("type chunk offset:" + Utils.bytesToHexString(Utils.int2Byte(resTypeOffset)));
+        System.out.println("type chunk offset:" + Utils.bytesToHexString(Utils.int2Byte(resTypeOffset))+" int= "+resTypeOffset);
         ResTableType type = new ResTableType();
         //解析头部信息
         type.header = parseResChunkHeader(src, resTypeOffset);
@@ -248,17 +249,17 @@ public class ParseResourceUtils {
         int entryAryOffset = resTypeOffset + type.entriesStart;
         ResTableEntry[] tableEntryAry = new ResTableEntry[type.entryCount];
         ResValue[] resValueAry = new ResValue[type.entryCount];
-        System.out.println("entry offset:" + Utils.bytesToHexString(Utils.int2Byte(entryAryOffset)));
+        System.out.println("entry offset:" + Utils.bytesToHexString(Utils.int2Byte(entryAryOffset))+" int= "+entryAryOffset);
 
         //这里存在一个问题就是如果是ResMapEntry的话，偏移值是不一样的，所以这里需要计算不同的偏移值
         int bodySize = 0, valueOffset = entryAryOffset;
         for (int i = 0; i < type.entryCount; i++) {
             int resId = getResId(i);
-            System.out.println("resId:" + Utils.bytesToHexString(Utils.int2Byte(resId)));
+            System.out.println("resId:" + Utils.bytesToHexString(Utils.int2Byte(resId))+" resId="+resId);
             ResTableEntry entry = new ResTableEntry();
             ResValue value = new ResValue();
             valueOffset += bodySize;
-            System.out.println("valueOffset:" + Utils.bytesToHexString(Utils.int2Byte(valueOffset)));
+            System.out.println("valueOffset:" + Utils.bytesToHexString(Utils.int2Byte(valueOffset))+" valueOffset= "+valueOffset);
             entry = parseResEntry(Utils.copyByte(src, valueOffset, entry.getSize()));
 
             //这里需要注意的是，先判断entry的flag变量是否为1,如果为1的话，那就ResTable_map_entry
