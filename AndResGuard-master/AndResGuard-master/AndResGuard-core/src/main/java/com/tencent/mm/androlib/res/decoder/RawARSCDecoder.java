@@ -99,34 +99,54 @@ public class RawARSCDecoder {
         return packages;
     }
 
+    /**
+     * 解析 Package块
+     *
+     * @return
+     * @throws IOException
+     * @throws AndrolibException
+     */
     private ResPackage readTablePackage() throws IOException, AndrolibException {
         checkChunkType(Header.TYPE_PACKAGE);
+        //获取 package id
         int id = mIn.readInt();
+        //获取 包名
         String name = mIn.readNullEndedString(128, true);
-        /* typeNameStrings */
+        /*资源类型 string pool 偏移 （typeNameStrings） */
         mIn.skipInt();
-        /* typeNameCount */
+        /*lastPublicType (typeNameCount) */
         mIn.skipInt();
-        /* specNameStrings */
+        /*资源关键字 string pool 偏移 （specNameStrings） */
         mIn.skipInt();
-        /* specNameCount */
+        /*lastPublicKey(specNameCount)  */
         mIn.skipInt();
 
+        //如果PackageHeader的大小 等于 splitHeaderSize 这就说明PackageHeader中包含 mTypeIdOffset
         // TypeIdOffset was added platform_frameworks_base/@f90f2f8dc36e7243b85e0b6a7fd5a590893c827e
         // which is only in split/new applications.
         int splitHeaderSize = (2 + 2 + 4 + 4 + (2 * 128) + (4 * 5)); // short, short, int, int, char[128], int * 4
         if (mHeader.headerSize == splitHeaderSize) {
             mTypeIdOffset = mIn.readInt();
+            System.out.printf("mTypeIdOffset= %s\n", mTypeIdOffset);
         }
 
+        //解析 资源类型字符串池
         mTypeNames = StringBlock.read(mIn);
+        //解析 资源项名称字符串池
         mSpecNames = StringBlock.read(mIn);
+
+        //通过package id 获取 resid 不过mResId 的组成应该是  (((packId) << 24) | (((resTypeId) & 0xFF) << 16) | (entryid & 0xFFFF))
+        //具体参考 ParseResourceUtils 中的 getResId 方法。这里的 mResId 只是一个半成品，后面还会进过运算的到 最终的mResId
         mResId = id << 24;
         mPkg = new ResPackage(id, name);
         nextChunk();
+
+        //resources.arsc中会通过 TYPE_LIBRARY 中会记录自己的依赖的库
         while (mHeader.type == Header.TYPE_LIBRARY) {
             readLibraryType();
         }
+
+        //解析 TYPE_SPEC_TYPE
         while (mHeader.type == Header.TYPE_SPEC_TYPE) {
             readTableTypeSpec();
         }
@@ -354,6 +374,7 @@ public class RawARSCDecoder {
 
     /**
      * 解析头部数据 并赋值给 mHeader
+     *
      * @return
      * @throws IOException
      */

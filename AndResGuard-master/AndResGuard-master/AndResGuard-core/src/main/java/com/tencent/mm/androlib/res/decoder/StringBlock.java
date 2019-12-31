@@ -106,6 +106,7 @@ public class StringBlock {
             block.m_styleOffsets = reader.readIntArray(styleCount);
         }
         {
+            //size = 整个字符串所占字节大小
             int size = ((stylesOffset == 0) ? chunkSize : stylesOffset) - stringsOffset;
 
             if ((size % 4) != 0) {
@@ -121,6 +122,7 @@ public class StringBlock {
 //            }
         }
         if (stylesOffset != 0) {
+            //size = 整个style所占字节大小
             int size = (chunkSize - stylesOffset);
             if ((size % 4) != 0) {
                 throw new IOException("Style data size is not multiple of 4 (" + size + ").");
