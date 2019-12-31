@@ -215,7 +215,7 @@ public class ApkDecoder {
 
       System.out.printf("decoding resources.arsc\n");
 
-      //解析arsc文件
+      //解析arsc文件 这一步不知道在干啥
       RawARSCDecoder.decode(apkFile.getDirectory().getFileInput("resources.arsc"));
 
       //解析arsc文件 并输出 ResPackage
