@@ -89,7 +89,7 @@ public class RawARSCDecoder {
         nextChunkCheckType(Header.TYPE_TABLE);
         //解析 package数
         int packageCount = mIn.readInt();
-        //解析资源项值字符串池
+        //解析ResStringPool
         StringBlock.read(mIn);
         ResPackage[] packages = new ResPackage[packageCount];
         nextChunk();
@@ -352,6 +352,11 @@ public class RawARSCDecoder {
         return string.toString();
     }
 
+    /**
+     * 解析头部数据 并赋值给 mHeader
+     * @return
+     * @throws IOException
+     */
     private Header nextChunk() throws IOException {
         return mHeader = Header.read(mIn, mCountIn);
     }
@@ -379,6 +384,9 @@ public class RawARSCDecoder {
         mExistTypeNames.put(type, names);
     }
 
+    /**
+     * 数据头模块封装
+     */
     public static class Header {
         public final static short TYPE_NONE = -1;
         public final static short TYPE_TABLE = 0x0002;
@@ -404,6 +412,7 @@ public class RawARSCDecoder {
 
         public static Header read(ExtDataInput in, CountingInputStream countIn) throws IOException {
             short type;
+            //获取已经读过的字节数，默认值是0
             int start = countIn.getCount();
             try {
                 type = in.readShort();
