@@ -474,6 +474,8 @@ public class ARSCDecoder {
             System.out.printf("Decoding Shared Library (%s), pkgId: %d\n", packageName, packageId);
         }
 
+        //如果library的下一个块儿是 TYPE_TYPE 则进行解析
+        //感觉这里有问题啊 因为readTableTypeSpec（）中的 checkChunkType(Header.TYPE_SPEC_TYPE); 过不去啊
         while (nextChunk().type == Header.TYPE_TYPE) {
             readTableTypeSpec();
         }
@@ -484,6 +486,7 @@ public class ARSCDecoder {
         byte id = mIn.readByte();
         mIn.skipBytes(3);
         int entryCount = mIn.readInt();
+        //确定type类型和包名
         mType = new ResType(mTypeNames.getString(id - 1), mPkg);
         if (DEBUG) {
             System.out.printf("[ReadTableType] type (%s) id: (%d) curr (%d)\n", mType, id, mCurrTypeID);
@@ -496,8 +499,9 @@ public class ARSCDecoder {
         // 是否混淆文件路径
         mShouldResguardForType = isToResguardFile(mTypeNames.getString(id - 1));
 
-        // 对，这里是用来描述差异性的！！！
+        // 对，这里是用来描述差异性的！！！（跳过 资源 spce 数组）
         mIn.skipBytes(entryCount * 4);
+        // 获取到资源id
         mResId = (0xff000000 & mResId) | id << 16;
 
         while (nextChunk().type == Header.TYPE_TYPE) {
@@ -505,11 +509,16 @@ public class ARSCDecoder {
         }
     }
 
+    /**
+     * 配置 mResguardBuilder
+     * @param resTypeId
+     */
     private void initResGuardBuild(int resTypeId) {
         // we need remove string from resguard candidate list if it exists in white list
         HashSet<Pattern> whiteListPatterns = getWhiteList(mType.getName());
-        // init resguard builder
+        // init resguard builder （防止 mResguardBuilder 中包含白名单内容？？？）
         mResguardBuilder.reset(whiteListPatterns);
+        //这是在干啥？
         mResguardBuilder.removeStrings(RawARSCDecoder.getExistTypeSpecNameStrings(resTypeId));
         // 如果是保持mapping的话，需要去掉某部分已经用过的mapping
         reduceFromOldMappingFile();
@@ -549,11 +558,13 @@ public class ARSCDecoder {
 
     private void readConfig() throws IOException, AndrolibException {
         checkChunkType(Header.TYPE_TYPE);
-        /* typeId */
+        /* 跳过 typeId 和保留字段 */
         mIn.skipInt();
         int entryCount = mIn.readInt();
         int entriesStart = mIn.readInt();
+        //解析config 但是没有用
         readConfigFlags();
+        //获取 ResTable_entry便宜数组
         int[] entryOffsets = mIn.readIntArray(entryCount);
         for (int i = 0; i < entryOffsets.length; i++) {
             mCurEntryID = i;
@@ -752,6 +763,7 @@ public class ARSCDecoder {
                 String raw = mTableStrings.get(data).toString();
                 if (StringUtil.isBlank(raw) || raw.equalsIgnoreCase("null")) return;
 
+                //获取混淆后的名字
                 String proguard = mPkg.getSpecRepplace(mResId);
                 //这个要写死这个，因为resources.arsc里面就是用这个
                 int secondSlash = raw.lastIndexOf("/");
@@ -799,6 +811,7 @@ public class ARSCDecoder {
                 //这里用的是linux的分隔符
                 HashMap<String, Integer> compressData = mApkDecoder.getCompressData();
                 if (compressData.containsKey(raw)) {
+                    //就是在这里替换了 混淆后的文件名！！！！
                     compressData.put(result, compressData.get(raw));
                 } else {
                     System.err.printf("can not find the compress dataresFile=%s\n", raw);
@@ -877,6 +890,7 @@ public class ARSCDecoder {
     }
 
     private void readConfigFlags() throws IOException, AndrolibException {
+        //获取config 的大小
         int size = mIn.readInt();
         int read = 28;
         if (size < 28) {
