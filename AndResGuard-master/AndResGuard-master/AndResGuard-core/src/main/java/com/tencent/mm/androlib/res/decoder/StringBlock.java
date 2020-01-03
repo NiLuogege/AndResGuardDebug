@@ -403,6 +403,7 @@ public class StringBlock {
         out.writeCheckChunkTypeInt(reader, CHUNK_STRINGPOOL_TYPE, CHUNK_NULL_TYPE);
         int chunkSize = reader.readInt();
         out.writeInt(chunkSize);
+        //这里的 -8 是将type  ，头大小 和块大小 占的空间去掉
         out.writeBytes(reader, chunkSize - 8);
     }
 

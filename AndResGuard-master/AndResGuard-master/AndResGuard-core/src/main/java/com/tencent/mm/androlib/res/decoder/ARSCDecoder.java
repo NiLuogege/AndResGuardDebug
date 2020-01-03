@@ -409,6 +409,7 @@ public class ARSCDecoder {
         mOut.writeInt(mIn.readInt());
         /* specNameCount -> 写入 资源项名称字符串资源池的元素的个数*/
         mOut.writeInt(mIn.readInt());
+        //写入 资源类型字符串池
         StringBlock.writeAll(mIn, mOut);
 
         if (mPkgs[mCurPackageID].isCanResguard()) {
