@@ -137,9 +137,13 @@ public class StringBlock {
     public static int writeSpecNameStringBlock(
             ExtDataInput reader, ExtDataOutput out, Map<String, Set<String>> specNames, Map<String, Integer> curSpecNameToPos)
             throws IOException, AndrolibException {
+        //读 type+头大小
         int type = reader.readInt();
+        // 读 块大小
         int chunkSize = reader.readInt();
+        // 读 字符串个数
         int stringCount = reader.readInt();
+        // 读 style 个数
         int styleOffsetCount = reader.readInt();
 
         if (styleOffsetCount != 0) {
@@ -148,11 +152,16 @@ public class StringBlock {
             ));
         }
 
+        //读 flags
         int flags = reader.readInt();
         boolean isUTF8 = (flags & UTF8_FLAG) != 0;
+        // 读字符串起始位置
         int stringsOffset = reader.readInt();
+        //读 style 起始位置
         int stylesOffset = reader.readInt();
+        // 读 字符串偏移数组
         reader.readIntArray(stringCount);
+        // 获取字符串 长度
         int size = ((stylesOffset == 0) ? chunkSize : stylesOffset) - stringsOffset;
 
         if ((size % 4) != 0) {
@@ -161,6 +170,8 @@ public class StringBlock {
         byte[] temp_strings = new byte[size];
         reader.readFully(temp_strings);
         int totalSize = 0;
+
+        //写入 type + 头大小
         out.writeCheckInt(type, CHUNK_STRINGPOOL_TYPE);
         totalSize += 4;
         stringCount = specNames.keySet().size();
