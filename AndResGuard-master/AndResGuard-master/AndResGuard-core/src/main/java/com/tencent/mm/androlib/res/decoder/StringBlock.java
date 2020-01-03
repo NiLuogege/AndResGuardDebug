@@ -261,12 +261,14 @@ public class StringBlock {
             System.out.printf("resources.arsc Character Encoding: utf-16\n");
         }
 
+        //读取 字符串偏移数组
         block.m_stringOffsets = reader.readIntArray(stringCount);
         block.m_stringOwns = new int[stringCount];
         for (int i = 0; i < stringCount; i++) {
             block.m_stringOwns[i] = -1;
         }
         if (styleOffsetCount != 0) {
+            //读取 style 偏移数组
             block.m_styleOffsets = reader.readIntArray(styleOffsetCount);
         }
         {
@@ -275,6 +277,7 @@ public class StringBlock {
                 throw new IOException("String data size is not multiple of 4 (" + size + ").");
             }
             block.m_strings = new byte[size];
+            //将字符串池 读取到  block.m_strings 中
             reader.readFully(block.m_strings);
         }
         if (stylesOffset != 0) {
@@ -282,27 +285,32 @@ public class StringBlock {
             if ((size % 4) != 0) {
                 throw new IOException("Style data size is not multiple of 4 (" + size + ").");
             }
+            //将style池 读取到block.m_styles 中
             block.m_styles = reader.readIntArray(size / 4);
         }
 
         int totalSize = 0;
+        //同时写入字符串池的 type 和 头大小
         out.writeCheckInt(type, CHUNK_STRINGPOOL_TYPE);
         totalSize += 4;
 
         totalSize += 6 * 4 + 4 * stringCount + 4 * styleOffsetCount;
+        //字符串起始位置
         stringsOffset = totalSize;
 
         byte[] strings = new byte[block.m_strings.length];
         int[] stringOffsets = new int[stringCount];
+        //将字符串偏移数组 copy 给 stringOffsets
         System.arraycopy(block.m_stringOffsets, 0, stringOffsets, 0, stringOffsets.length);
 
+        //开始写入混淆后的字符串
         int offset = 0;
         int i;
         for (i = 0; i < stringCount; i++) {
             stringOffsets[i] = offset;
             //如果找不到即没混淆这一项,直接拷贝
             if (tableProguardMap.get(i) == null) {
-                //需要区分是否是最后一项
+                //需要区分是否是最后一项  计算需要copy的长度
                 int copyLen = (i == (stringCount - 1)) ? (block.m_strings.length - block.m_stringOffsets[i])
                         : (block.m_stringOffsets[i + 1] - block.m_stringOffsets[i]);
                 System.arraycopy(block.m_strings, block.m_stringOffsets[i], strings, offset, copyLen);
@@ -311,8 +319,11 @@ public class StringBlock {
             } else {
                 String name = tableProguardMap.get(i);
                 if (block.m_isUTF8) {
+                    //写入这两个字节是干什么？utf-8不是是以ox00开始的么？
                     strings[offset++] = (byte) name.length();
                     strings[offset++] = (byte) name.length();
+                    System.out.println("name.length=" + name.length());
+
                     totalSize += 2;
                     byte[] tempByte = name.getBytes(Charset.forName("UTF-8"));
                     if (name.length() != tempByte.length) {

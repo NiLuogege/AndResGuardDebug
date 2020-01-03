@@ -63,13 +63,13 @@ public class ARSCDecoder {
     private final static short ENTRY_FLAG_COMPLEX = 0x0001;
     private static final Logger LOGGER = Logger.getLogger(ARSCDecoder.class.getName());
     private static final int KNOWN_CONFIG_BYTES = 56;
-
+    //存放 id  和混淆后字符串 对应关系的数组(key 还不太清楚是啥)
     public static Map<Integer, String> mTableStringsResguard = new LinkedHashMap<>();
     public static int mMergeDuplicatedResCount = 0;
     //保存的是 res下文件全路径 和 混淆后名称的关系
     private final Map<String, String> mOldFileName;
     private final Map<String, Integer> mCurSpecNameToPos;
-    private final HashSet<String> mShouldResguardTypeSet;
+    private final HashSet<String> mShouldResguardTypeSet;//应该要混淆的 类别 包含 color ，drawable等
     private final ApkDecoder mApkDecoder;
     private ExtDataInput mIn;
     private ExtDataOutput mOut;
@@ -157,13 +157,14 @@ public class ARSCDecoder {
         //获取原资源文件对象（temp下的res）
         File rawResFile = mApkDecoder.getRawResFile();
 
+        //获取 rawResFile 下的所有子文件（不包含子子文件）
         File[] resFiles = rawResFile.listFiles();
 
         // 需要看看哪些类型是要混淆文件路径的（获取到所有的类型（layout，drawable等）并存放在 mShouldResguardTypeSet）
         for (File resFile : resFiles) {
             String raw = resFile.getName();
             if (raw.contains("-")) {
-                raw = raw.substring(0, raw.indexOf("-"));
+                raw = raw.substring(0, raw.indexOf("-"));//color-v21 会截成color
             }
             mShouldResguardTypeSet.add(raw);
         }
@@ -202,10 +203,12 @@ public class ARSCDecoder {
                 }
             } else {
                 for (int i = 0; i < resFiles.length; i++) {
-                    // 这里也要用linux的分隔符,如果普通的话，就是r
-                    mOldFileName.put("res" + "/" + resFiles[i].getName(),
-                            TypedValue.RES_FILE_PATH + "/" + mResguardBuilder.getReplaceString()
-                    );
+                    // 这里也要用linux的分隔符,如果普通的话，就是r。这里替换的是 res 下文件夹的 名称
+                    mOldFileName.put("res" + "/" + resFiles[i].getName(), TypedValue.RES_FILE_PATH + "/" + mResguardBuilder.getReplaceString());
+
+                    System.out.printf("[debug] mOldFileName put key= %s , value= %s\n",
+                            resFiles[i].getName(),
+                            TypedValue.RES_FILE_PATH + "/" + mResguardBuilder.getReplaceString());
                 }
             }
             //将对应关系 写入 resource_mapping_ 中
@@ -258,7 +261,7 @@ public class ARSCDecoder {
     }
 
     /**
-     * 将对应关系 写入 resource_mapping_ 中
+     * 将文件夹对应关系 写入 resource_mapping_ 中
      *
      * @throws IOException
      */
@@ -511,6 +514,7 @@ public class ARSCDecoder {
 
     /**
      * 配置 mResguardBuilder
+     *
      * @param resTypeId
      */
     private void initResGuardBuild(int resTypeId) {
@@ -564,7 +568,7 @@ public class ARSCDecoder {
         int entriesStart = mIn.readInt();
         //解析config 但是没有用
         readConfigFlags();
-        //获取 ResTable_entry便宜数组
+        //获取 ResTable_entry 偏移数组
         int[] entryOffsets = mIn.readIntArray(entryCount);
         for (int i = 0; i < entryOffsets.length; i++) {
             mCurEntryID = i;
@@ -830,7 +834,9 @@ public class ARSCDecoder {
                     }
                     //already copied
                     mApkDecoder.removeCopiedResFile(resRawFile.toPath());
+                    //放入 mTableStringsResguard 中
                     mTableStringsResguard.put(data, result);
+                    System.out.printf("mTableStringsResguard put key= %s,value= %s \n", data, result);
                 }
             }
         }

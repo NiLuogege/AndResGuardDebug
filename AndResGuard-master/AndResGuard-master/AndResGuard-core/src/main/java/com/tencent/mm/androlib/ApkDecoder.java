@@ -218,13 +218,13 @@ public class ApkDecoder {
       //解析arsc文件 这一步不知道在干啥 感觉解析后的数据都没有使用啊
       RawARSCDecoder.decode(apkFile.getDirectory().getFileInput("resources.arsc"));
 
-      //解析arsc文件 并输出 ResPackage
+      //解析arsc文件 并输出 ResPackage 将混淆后的名字 放入mCompressData中
       ResPackage[] pkgs = ARSCDecoder.decode(apkFile.getDirectory().getFileInput("resources.arsc"), this);
 
       //把没有纪录在resources.arsc的资源文件也拷进dest目录
       copyOtherResFiles();
 
-      //进行混淆并写入 到 resources_temp （outDir 下） 中
+      //将混淆写入 到 resources_temp （outDir 下） 中
       ARSCDecoder.write(apkFile.getDirectory().getFileInput("resources.arsc"), this, pkgs);
     }
   }
