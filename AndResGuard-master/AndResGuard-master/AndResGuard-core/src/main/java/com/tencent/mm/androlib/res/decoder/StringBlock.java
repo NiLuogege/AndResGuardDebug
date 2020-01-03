@@ -319,10 +319,9 @@ public class StringBlock {
             } else {
                 String name = tableProguardMap.get(i);
                 if (block.m_isUTF8) {
-                    //写入这两个字节是干什么？utf-8不是是以ox00开始的么？
+                    //utf8 前两个字节分别代表 utf-16 和 utf-8 下的字符串长度
                     strings[offset++] = (byte) name.length();
                     strings[offset++] = (byte) name.length();
-                    System.out.println("name.length=" + name.length());
 
                     totalSize += 2;
                     byte[] tempByte = name.getBytes(Charset.forName("UTF-8"));
@@ -335,6 +334,7 @@ public class StringBlock {
                     }
                     System.arraycopy(tempByte, 0, strings, offset, tempByte.length);
                     offset += name.length();
+                    //utf-8 是以0结尾
                     strings[offset++] = NULL;
                     totalSize += name.length() + 1;
                 } else {
@@ -357,7 +357,7 @@ public class StringBlock {
                 }
             }
         }
-        //要保证string size 是4的倍数,要补零
+        //要保证string size 是4的倍数,要补零  -》 这里的 size 标识的是字符串池的大小，不过为什么要是4的倍数这个不太知道
         int size = totalSize - stringsOffset;
         if ((size % 4) != 0) {
             int add = 4 - (size % 4);
@@ -366,7 +366,7 @@ public class StringBlock {
                 totalSize++;
             }
         }
-        //因为是int的,如果之前的不为0
+        //因为是int的,如果之前的不为0 -》 这里为style起始位置赋值
         if (stylesOffset != 0) {
             stylesOffset = totalSize;
             totalSize += block.m_styles.length * 4;
@@ -386,6 +386,8 @@ public class StringBlock {
         if (stylesOffset != 0) {
             out.writeIntArray(block.m_styles);
         }
+
+        //输出减少的字节数
         return (chunkSize - totalSize);
     }
 

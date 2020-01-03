@@ -396,17 +396,18 @@ public class ARSCDecoder {
     private void writePackage() throws IOException, AndrolibException {
         checkChunkType(Header.TYPE_PACKAGE);
         int id = (byte) mIn.readInt();
+        //写入packageId
         mOut.writeInt(id);
         mResId = id << 24;
-        //char_16的，一共256byte
+        //char_16的，一共256byte -> 写入 包名
         mOut.writeBytes(mIn, 256);
-        /* typeNameStrings */
+        /* typeNameStrings -> 写入 资源类型 string pool偏移 */
         mOut.writeInt(mIn.readInt());
-        /* typeNameCount */
+        /* typeNameCount -> 写入 类型字符串资源池元素个数 */
         mOut.writeInt(mIn.readInt());
-        /* specNameStrings */
+        /* specNameStrings -> 写入 资源关键字 string pool 偏移 */
         mOut.writeInt(mIn.readInt());
-        /* specNameCount */
+        /* specNameCount -> 写入 资源项名称字符串资源池的元素的个数*/
         mOut.writeInt(mIn.readInt());
         StringBlock.writeAll(mIn, mOut);
 
