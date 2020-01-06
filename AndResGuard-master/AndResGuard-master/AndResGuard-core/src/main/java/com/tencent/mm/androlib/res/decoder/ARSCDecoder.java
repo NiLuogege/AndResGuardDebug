@@ -63,7 +63,7 @@ public class ARSCDecoder {
     private final static short ENTRY_FLAG_COMPLEX = 0x0001;
     private static final Logger LOGGER = Logger.getLogger(ARSCDecoder.class.getName());
     private static final int KNOWN_CONFIG_BYTES = 56;
-    //存放 字符串偏移量  和混淆后字符串
+    //存放 key  和混淆后字符串(这个可以 不太清池是干啥的)
     public static Map<Integer, String> mTableStringsResguard = new LinkedHashMap<>();
     public static int mMergeDuplicatedResCount = 0;
     //保存的是 res下文件全路径 和 混淆后名称的关系
@@ -762,7 +762,7 @@ public class ARSCDecoder {
         mIn.skipCheckByte((byte) 0);
         //数据类型
         byte type = mIn.readByte();
-        //实际数据（在 mTableStrings 中的偏移量）
+        //specNamesId(资源项目名称index （下标）) 通过这个再加上 资源项目池 就可以拿到对应 String
         int data = mIn.readInt();
 
         //这里面有几个限制，一对于string ,id, array我们是知道肯定不用改的，第二看要那个type是否对应有文件路径
@@ -846,7 +846,7 @@ public class ARSCDecoder {
                     mApkDecoder.removeCopiedResFile(resRawFile.toPath());
                     //放入 mTableStringsResguard 中
                     mTableStringsResguard.put(data, result);
-//                    Utils.logARSC("mTableStringsResguard put key= %s,value= %s ", data, result);
+                    Utils.logARSC("mTableStringsResguard put key= %s,value= %s ", data, result);
                 }
             }
         }

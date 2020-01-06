@@ -243,7 +243,9 @@ public class RawARSCDecoder {
         /* size */
         mIn.skipBytes(2);
         short flags = mIn.readShort();
+        //specNamesId(资源项目名称index （下标）) 通过这个再加上 资源项目池 就可以拿到对应 String
         int specNamesId = mIn.readInt();
+        Utils.logRawARSC("readEntry putTypeSpecNameStrings typeId(mCurTypeID)= %s, specNamesId= %s", mCurTypeID, specNamesId);
         putTypeSpecNameStrings(mCurTypeID, mSpecNames.getString(specNamesId));
         boolean readDirect = false;
         if ((flags & ENTRY_FLAG_COMPLEX) == 0) {
@@ -416,8 +418,8 @@ public class RawARSCDecoder {
         names.add(name);
         mExistTypeNames.put(type, names);
 
+        //debug
         if (type == 10) {
-
             Utils.logRawARSC("mExistTypeNames put key= %s, value= %s ", type, names);
         }
 //        Utils.logRawARSC("mExistTypeNames put key(typeId)= %s", type);
