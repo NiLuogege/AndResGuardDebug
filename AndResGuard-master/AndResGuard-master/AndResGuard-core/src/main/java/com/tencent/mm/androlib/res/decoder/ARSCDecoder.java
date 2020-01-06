@@ -524,7 +524,7 @@ public class ARSCDecoder {
         HashSet<Pattern> whiteListPatterns = getWhiteList(mType.getName());
         // init resguard builder （防止 mResguardBuilder 中包含白名单内容？？？）
         mResguardBuilder.reset(whiteListPatterns);
-        //这是在干啥？
+        //避免 混淆后有重复的 String，所以要剔除 重复的名字
         mResguardBuilder.removeStrings(RawARSCDecoder.getExistTypeSpecNameStrings(resTypeId));
         // 如果是保持mapping的话，需要去掉某部分已经用过的mapping
         reduceFromOldMappingFile();

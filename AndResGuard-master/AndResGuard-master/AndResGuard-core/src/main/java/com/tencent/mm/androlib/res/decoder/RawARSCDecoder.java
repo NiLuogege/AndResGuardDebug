@@ -416,7 +416,10 @@ public class RawARSCDecoder {
         names.add(name);
         mExistTypeNames.put(type, names);
 
-//        Utils.logRawARSC("mExistTypeNames put key= %s, value= %s ", type, names);
+        if (type == 10) {
+
+            Utils.logRawARSC("mExistTypeNames put key= %s, value= %s ", type, names);
+        }
 //        Utils.logRawARSC("mExistTypeNames put key(typeId)= %s", type);
     }
 
