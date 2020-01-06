@@ -22,6 +22,7 @@ import com.tencent.mm.androlib.AndrolibException;
 import com.tencent.mm.androlib.res.data.ResPackage;
 import com.tencent.mm.androlib.res.data.ResType;
 import com.tencent.mm.util.ExtDataInput;
+import com.tencent.mm.util.Utils;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -70,10 +71,10 @@ public class RawARSCDecoder {
     }
 
     public static ResPackage[] decode(InputStream arscStream) throws AndrolibException {
-        System.out.println("method RawARSCDecoder--》decode");
+        Utils.logRawARSC("method RawARSCDecoder--》decode");
         try {
             RawARSCDecoder decoder = new RawARSCDecoder(arscStream);
-            System.out.printf("parse to get the exist names in the resouces.arsc first\n");
+            Utils.logRawARSC("parse to get the exist names in the resouces.arsc first");
             return decoder.readTable();
         } catch (IOException ex) {
             throw new AndrolibException("Could not decode arsc file", ex);
@@ -128,7 +129,7 @@ public class RawARSCDecoder {
         int splitHeaderSize = (2 + 2 + 4 + 4 + (2 * 128) + (4 * 5)); // short, short, int, int, char[128], int * 4
         if (mHeader.headerSize == splitHeaderSize) {
             mTypeIdOffset = mIn.readInt();
-            System.out.printf("mTypeIdOffset= %s\n", mTypeIdOffset);
+            Utils.logRawARSC("mTypeIdOffset= %s", mTypeIdOffset);
         }
 
         //解析 资源类型字符串池
@@ -144,13 +145,13 @@ public class RawARSCDecoder {
 
         //resources.arsc中会通过 TYPE_LIBRARY 中会记录自己的依赖的库
         while (mHeader.type == Header.TYPE_LIBRARY) {
-            System.out.println("TYPE_LIBRARY 时调用 readTableTypeSpec");
+            Utils.logRawARSC("TYPE_LIBRARY 时调用 readTableTypeSpec");
             readLibraryType();
         }
 
         //解析 TYPE_SPEC_TYPE
         while (mHeader.type == Header.TYPE_SPEC_TYPE) {
-            System.out.println("TYPE_SPEC_TYPE 时调用 readTableTypeSpec");
+            Utils.logRawARSC("TYPE_SPEC_TYPE 时调用 readTableTypeSpec");
             readTableTypeSpec();
         }
 
@@ -167,7 +168,7 @@ public class RawARSCDecoder {
         for (int i = 0; i < libraryCount; i++) {
             packageId = mIn.readInt();
             packageName = mIn.readNullEndedString(128, true);
-            System.out.printf("Decoding Shared Library (%s), pkgId: %d\n", packageName, packageId);
+            Utils.logRawARSC("Decoding Shared Library (%s), pkgId: %d", packageName, packageId);
         }
 
         nextChunk();
@@ -181,12 +182,12 @@ public class RawARSCDecoder {
 
         nextChunk();
         while (mHeader.type == Header.TYPE_SPEC_TYPE) {
-            System.out.println("eTypeSpec");
+            Utils.logRawARSC("eTypeSpec");
             readSingleTableTypeSpec();
             nextChunk();
         }
         while (mHeader.type == Header.TYPE_TYPE) {
-            System.out.println("调用 readConfig");
+            Utils.logRawARSC("调用 readConfig");
             readConfig();
             nextChunk();
         }
@@ -205,7 +206,7 @@ public class RawARSCDecoder {
         mResId = (0xff000000 & mResId) | id << 16;
         mType = new ResType(mTypeNames.getString(id - 1), mPkg);
 
-        System.out.printf("readSingleTableTypeSpec mCurTypeID= %s ,mResId= %s , typeName= %s \n",
+        Utils.logRawARSC("readSingleTableTypeSpec mCurTypeID= %s ,mResId= %s , typeName= %s ",
                 mCurTypeID, mResId, mType.getName());
     }
 
@@ -412,7 +413,7 @@ public class RawARSCDecoder {
         names.add(name);
         mExistTypeNames.put(type, names);
 
-//        System.out.printf("mExistTypeNames put key= %s, value= %s \n", type, names);
+//        Utils.logRawARSC("mExistTypeNames put key= %s, value= %s ", type, names);
     }
 
     /**
@@ -438,7 +439,7 @@ public class RawARSCDecoder {
             this.startPosition = headerStart;
             this.endPosition = headerStart + chunkSize;
 
-//            System.out.printf("header type= %s headerSize= %s chunkSize= %s headerStart= %s endPosition= %s \n", type, headerSize, chunkSize, startPosition, endPosition);
+//            Utils.logRawARSC("header type= %s headerSize= %s chunkSize= %s headerStart= %s endPosition= %s ", type, headerSize, chunkSize, startPosition, endPosition);
         }
 
         public static Header read(ExtDataInput in, CountingInputStream countIn) throws IOException {
