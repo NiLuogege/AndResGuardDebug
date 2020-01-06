@@ -25,6 +25,7 @@ import java.util.Set;
 public class ResPackage {
   private final String mName;
 
+  //记录 资源id 和 混淆后的文件名称
   private final Map<Integer, String> mSpecNamesReplace;
   private final Map<String, Set<String>> mSpecNamesBlock;
   private boolean mCanProguard = false;

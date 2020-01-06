@@ -58,12 +58,12 @@ import java.util.regex.Pattern;
 
 public class ARSCDecoder {
 
-    private final static boolean DEBUG = false;
+    private final static boolean DEBUG = true;
 
     private final static short ENTRY_FLAG_COMPLEX = 0x0001;
     private static final Logger LOGGER = Logger.getLogger(ARSCDecoder.class.getName());
     private static final int KNOWN_CONFIG_BYTES = 56;
-    //存放 id  和混淆后字符串 对应关系的数组(key 还不太清楚是啥)
+    //存放 字符串偏移量  和混淆后字符串
     public static Map<Integer, String> mTableStringsResguard = new LinkedHashMap<>();
     public static int mMergeDuplicatedResCount = 0;
     //保存的是 res下文件全路径 和 混淆后名称的关系
@@ -694,8 +694,11 @@ public class ARSCDecoder {
         }
         //输出到 resource_mapping_ 文件中
         generalResIDMapping(mPkg.getName(), mType.getName(), mSpecNames.get(specNamesId).toString(), replaceString);
-        //将 资源id 和7混淆后的string进行保存
+        //将 资源id 和 混淆后的文件名称进行保存
         mPkg.putSpecNamesReplace(mResId, replaceString);
+
+        Utils.logARSC("putSpecNamesReplace key(ResId)= %s,replaceString= %s",mResId,replaceString);
+
         // arsc name列混淆成固定名字, 减少string pool大小
         boolean useFixedName = config.mFixedResName != null && config.mFixedResName.length() > 0;
         String fixedName = useFixedName ? config.mFixedResName : replaceString;
@@ -749,6 +752,7 @@ public class ARSCDecoder {
     }
 
     /**
+     * 继续解析 ResTable_entry类型数据
      * @param flags whether read direct
      */
     private void readValue(boolean flags, int specNamesId) throws IOException, AndrolibException {
@@ -756,20 +760,23 @@ public class ARSCDecoder {
         mIn.skipCheckShort((short) 8);
         /* zero */
         mIn.skipCheckByte((byte) 0);
+        //数据类型
         byte type = mIn.readByte();
+        //实际数据（在 mTableStrings 中的偏移量）
         int data = mIn.readInt();
 
         //这里面有几个限制，一对于string ,id, array我们是知道肯定不用改的，第二看要那个type是否对应有文件路径
-        if (mPkg.isCanResguard()
+        if (mPkg.isCanResguard()//可以混淆
                 && flags
-                && type == TypedValue.TYPE_STRING
-                && mShouldResguardForType
-                && mShouldResguardTypeSet.contains(mType.getName())) {
+                && type == TypedValue.TYPE_STRING //是String池
+                && mShouldResguardForType //非 string ,id, array
+                && mShouldResguardTypeSet.contains(mType.getName()))//应该要混淆的 类别 包含 color ，drawable等
+        {
             if (mTableStringsResguard.get(data) == null) {
                 String raw = mTableStrings.get(data).toString();
                 if (StringUtil.isBlank(raw) || raw.equalsIgnoreCase("null")) return;
 
-                //获取混淆后的名字
+                //获取混淆后的文件名 ，这里的 proguard 就是在调用readEntry 方法是 生成的混淆名称
                 String proguard = mPkg.getSpecRepplace(mResId);
                 //这个要写死这个，因为resources.arsc里面就是用这个
                 int secondSlash = raw.lastIndexOf("/");
@@ -819,6 +826,7 @@ public class ARSCDecoder {
                 if (compressData.containsKey(raw)) {
                     //就是在这里替换了 混淆后的文件名！！！！
                     compressData.put(result, compressData.get(raw));
+                    Utils.logARSC("compressData put result= %s, raw= %s, value= %s", result, raw, compressData.get(raw));
                 } else {
                     Utils.logARSC("can not find the compress dataresFile=%s", raw);
                 }
