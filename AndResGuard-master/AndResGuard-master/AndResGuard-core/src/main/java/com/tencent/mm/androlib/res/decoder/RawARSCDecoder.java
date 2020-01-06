@@ -199,7 +199,7 @@ public class RawARSCDecoder {
         mIn.skipBytes(3);
         int entryCount = mIn.readInt();
 
-        /* flags */
+        /* 对，这里是用来描述差异性的！！！（跳过 资源 spce 数组）*/
         mIn.skipBytes(entryCount * 4);
 
         mCurTypeID = id;
@@ -224,6 +224,7 @@ public class RawARSCDecoder {
         Utils.logRawARSC("readConfig typeId= %s,entryCount= %s", typeId, entryCount);
 
         readConfigFlags();
+        //Restable_enty 偏移数组
         int[] entryOffsets = mIn.readIntArray(entryCount);
         for (int i = 0; i < entryOffsets.length; i++) {
             if (entryOffsets[i] != -1) {
