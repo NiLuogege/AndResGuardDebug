@@ -206,9 +206,9 @@ public class ARSCDecoder {
                     // 这里也要用linux的分隔符,如果普通的话，就是r。这里替换的是 res 下文件夹的 名称
                     mOldFileName.put("res" + "/" + resFiles[i].getName(), TypedValue.RES_FILE_PATH + "/" + mResguardBuilder.getReplaceString());
 
-                    System.out.printf("[debug] mOldFileName put key= %s , value= %s\n",
-                            resFiles[i].getName(),
-                            TypedValue.RES_FILE_PATH + "/" + mResguardBuilder.getReplaceString());
+//                    System.out.printf("[debug] mOldFileName put key= %s , value= %s\n",
+//                            resFiles[i].getName(),
+//                            TypedValue.RES_FILE_PATH + "/" + mResguardBuilder.getReplaceString());
                 }
             }
             //将对应关系 写入 resource_mapping_ 中
@@ -838,7 +838,7 @@ public class ARSCDecoder {
                     mApkDecoder.removeCopiedResFile(resRawFile.toPath());
                     //放入 mTableStringsResguard 中
                     mTableStringsResguard.put(data, result);
-                    System.out.printf("mTableStringsResguard put key= %s,value= %s \n", data, result);
+//                    System.out.printf("mTableStringsResguard put key= %s,value= %s \n", data, result);
                 }
             }
         }

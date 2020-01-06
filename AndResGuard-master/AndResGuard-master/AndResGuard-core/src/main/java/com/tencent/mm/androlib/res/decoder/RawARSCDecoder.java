@@ -47,6 +47,7 @@ public class RawARSCDecoder {
     private static final Logger LOGGER = Logger.getLogger(ARSCDecoder.class.getName());
     private static final int KNOWN_CONFIG_BYTES = 64;
 
+    // 用于存放 typeID 和 对应type 的map
     private static HashMap<Integer, Set<String>> mExistTypeNames;
 
     private final CountingInputStream mCountIn;
@@ -143,11 +144,13 @@ public class RawARSCDecoder {
 
         //resources.arsc中会通过 TYPE_LIBRARY 中会记录自己的依赖的库
         while (mHeader.type == Header.TYPE_LIBRARY) {
+            System.out.println("TYPE_LIBRARY 时调用 readTableTypeSpec");
             readLibraryType();
         }
 
         //解析 TYPE_SPEC_TYPE
         while (mHeader.type == Header.TYPE_SPEC_TYPE) {
+            System.out.println("TYPE_SPEC_TYPE 时调用 readTableTypeSpec");
             readTableTypeSpec();
         }
 
@@ -178,10 +181,12 @@ public class RawARSCDecoder {
 
         nextChunk();
         while (mHeader.type == Header.TYPE_SPEC_TYPE) {
+            System.out.println("eTypeSpec");
             readSingleTableTypeSpec();
             nextChunk();
         }
         while (mHeader.type == Header.TYPE_TYPE) {
+            System.out.println("调用 readConfig");
             readConfig();
             nextChunk();
         }
@@ -199,6 +204,9 @@ public class RawARSCDecoder {
         mCurTypeID = id;
         mResId = (0xff000000 & mResId) | id << 16;
         mType = new ResType(mTypeNames.getString(id - 1), mPkg);
+
+        System.out.printf("readSingleTableTypeSpec mCurTypeID= %s ,mResId= %s , typeName= %s \n",
+                mCurTypeID, mResId, mType.getName());
     }
 
     private void readConfig() throws IOException, AndrolibException {
@@ -403,6 +411,8 @@ public class RawARSCDecoder {
         }
         names.add(name);
         mExistTypeNames.put(type, names);
+
+//        System.out.printf("mExistTypeNames put key= %s, value= %s \n", type, names);
     }
 
     /**
@@ -428,7 +438,7 @@ public class RawARSCDecoder {
             this.startPosition = headerStart;
             this.endPosition = headerStart + chunkSize;
 
-            System.out.printf("header type= %s headerSize= %s chunkSize= %s headerStart= %s endPosition= %s \n", type, headerSize, chunkSize, startPosition, endPosition);
+//            System.out.printf("header type= %s headerSize= %s chunkSize= %s headerStart= %s endPosition= %s \n", type, headerSize, chunkSize, startPosition, endPosition);
         }
 
         public static Header read(ExtDataInput in, CountingInputStream countIn) throws IOException {

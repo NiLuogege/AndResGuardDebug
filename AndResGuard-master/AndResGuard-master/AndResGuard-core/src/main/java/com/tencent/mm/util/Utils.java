@@ -183,4 +183,11 @@ public class Utils {
       }
     }
   }
+
+
+  boolean isLogRawARSCDecoder=true;
+
+  public static void log(String var1, Object... var2){
+    System.out.printf("[ApkDeflated] "+var1+"\n",var2);
+  }
 }
