@@ -63,7 +63,7 @@ public class ARSCDecoder {
     private final static short ENTRY_FLAG_COMPLEX = 0x0001;
     private static final Logger LOGGER = Logger.getLogger(ARSCDecoder.class.getName());
     private static final int KNOWN_CONFIG_BYTES = 56;
-    //存放 key  和混淆后字符串(这个可以 不太清池是干啥的)
+    //存放 pecNamesId(资源项目名称index （下标）通过这个再加上 资源项目池 就可以拿到对应 String)   和混淆后字符串
     public static Map<Integer, String> mTableStringsResguard = new LinkedHashMap<>();
     public static int mMergeDuplicatedResCount = 0;
     //保存的是 res下文件全路径 和 混淆后名称的关系
