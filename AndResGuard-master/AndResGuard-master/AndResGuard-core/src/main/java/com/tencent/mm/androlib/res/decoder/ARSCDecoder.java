@@ -187,7 +187,7 @@ public class ARSCDecoder {
                     keepFileNames.add(name.substring(dot + 1));
                 }
 
-                System.out.println("keepFileNames= " + keepFileNames.toString());
+                Utils.logARSC("keepFileNames= " + keepFileNames.toString());
 
                 // 去掉所有之前保留的命名，为了简单操作，mapping里面有的都去掉 防止重复
                 mResguardBuilder.removeStrings(keepFileNames);
@@ -206,7 +206,7 @@ public class ARSCDecoder {
                     // 这里也要用linux的分隔符,如果普通的话，就是r。这里替换的是 res 下文件夹的 名称
                     mOldFileName.put("res" + "/" + resFiles[i].getName(), TypedValue.RES_FILE_PATH + "/" + mResguardBuilder.getReplaceString());
 
-//                    System.out.printf("[debug] mOldFileName put key= %s , value= %s\n",
+//                    Utils.logARSC("[debug] mOldFileName put key= %s , value= %s",
 //                            resFiles[i].getName(),
 //                            TypedValue.RES_FILE_PATH + "/" + mResguardBuilder.getReplaceString());
                 }
@@ -230,15 +230,15 @@ public class ARSCDecoder {
             packages[i] = readPackage();
         }
         mMappingWriter.close();
-        System.out.printf("resources mapping file %s done\n", mApkDecoder.getResMappingFile().getAbsolutePath());
+        Utils.logARSC("resources mapping file %s done", mApkDecoder.getResMappingFile().getAbsolutePath());
         generalFilterEnd(mMergeDuplicatedResCount, mMergeDuplicatedResTotalSize);
         mMergeDuplicatedResMappingWriter.close();
-        System.out.printf("resources filter mapping file %s done\n", mApkDecoder.getMergeDuplicatedResMappingFile().getAbsolutePath());
+        Utils.logARSC("resources filter mapping file %s done", mApkDecoder.getMergeDuplicatedResMappingFile().getAbsolutePath());
         return packages;
     }
 
     private void writeTable() throws IOException, AndrolibException {
-        System.out.printf("writing new resources.arsc \n");
+        Utils.logARSC("writing new resources.arsc ");
         mTableLenghtChange = 0;
         writeNextChunkCheck(Header.TYPE_TABLE, 0);
         int packageCount = mIn.readInt();
@@ -361,7 +361,7 @@ public class ARSCDecoder {
         checkChunkType(Header.TYPE_PACKAGE);
         int id = (byte) mIn.readInt();
         String name = mIn.readNullEndedString(128, true);
-        System.out.printf("reading packagename %s\n", name);
+        Utils.logARSC("reading packagename %s", name);
 
         /* typeNameStrings */
         mIn.skipInt();
@@ -476,7 +476,7 @@ public class ARSCDecoder {
         for (int i = 0; i < libraryCount; i++) {
             packageId = mIn.readInt();
             packageName = mIn.readNullEndedString(128, true);
-            System.out.printf("Decoding Shared Library (%s), pkgId: %d\n", packageName, packageId);
+            Utils.logARSC("Decoding Shared Library (%s), pkgId: %d", packageName, packageId);
         }
 
         //如果library的下一个块儿是 TYPE_TYPE 则进行解析
@@ -494,7 +494,7 @@ public class ARSCDecoder {
         //确定type类型和包名
         mType = new ResType(mTypeNames.getString(id - 1), mPkg);
         if (DEBUG) {
-            System.out.printf("[ReadTableType] type (%s) id: (%d) curr (%d)\n", mType, id, mCurrTypeID);
+            Utils.logARSC("[ReadTableType] type (%s) id: (%d) curr (%d)", mType, id, mCurrTypeID);
         }
         // first meet a type of resource
         if (mCurrTypeID != id) {
@@ -650,7 +650,7 @@ public class ARSCDecoder {
                     Pattern p = it.next();
                     if (p.matcher(specName).matches()) {
                         if (DEBUG) {
-                            System.out.printf("[match] matcher %s ,typeName %s, specName :%s\n", p.pattern(), typeName, specName);
+                            Utils.logARSC("[match] matcher %s ,typeName %s, specName :%s", p.pattern(), typeName, specName);
                         }
                         mPkg.putSpecNamesReplace(mResId, specName);
                         mPkg.putSpecNamesblock(specName, specName);
@@ -783,7 +783,7 @@ public class ARSCDecoder {
                     newFilePath = mOldFileName.get(raw.substring(0, secondSlash));
                 }
                 if (newFilePath == null) {
-                    System.err.printf("can not found new res path, raw=%s\n", raw);
+                    Utils.logARSC("can not found new res path, raw=%s", raw);
                     return;
                 }
                 //同理这里不能用File.separator，因为resources.arsc里面就是用这个
@@ -820,11 +820,11 @@ public class ARSCDecoder {
                     //就是在这里替换了 混淆后的文件名！！！！
                     compressData.put(result, compressData.get(raw));
                 } else {
-                    System.err.printf("can not find the compress dataresFile=%s\n", raw);
+                    Utils.logARSC("can not find the compress dataresFile=%s", raw);
                 }
 
                 if (!resRawFile.exists()) {
-                    System.err.printf("can not find res file, you delete it? path: resFile=%s\n", resRawFile.getAbsolutePath());
+                    Utils.logARSC("can not find res file, you delete it? path: resFile=%s", resRawFile.getAbsolutePath());
                 } else {
                     if (!mergeDuplicatedRes && resDestFile.exists()) {
                         throw new AndrolibException(String.format("res dest file is already  found: destFile=%s",
@@ -838,7 +838,7 @@ public class ARSCDecoder {
                     mApkDecoder.removeCopiedResFile(resRawFile.toPath());
                     //放入 mTableStringsResguard 中
                     mTableStringsResguard.put(data, result);
-//                    System.out.printf("mTableStringsResguard put key= %s,value= %s \n", data, result);
+//                    Utils.logARSC("mTableStringsResguard put key= %s,value= %s ", data, result);
                 }
             }
         }

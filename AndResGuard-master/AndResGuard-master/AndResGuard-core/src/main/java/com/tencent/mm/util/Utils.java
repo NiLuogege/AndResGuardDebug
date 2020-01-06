@@ -186,10 +186,17 @@ public class Utils {
     }
 
 
-    static boolean isLogRawARSCDecoder = true;
+    static boolean isLogRawARSCDecoder = false;
 
     public static void logRawARSC(String var1, Object... var2) {
         if (isLogRawARSCDecoder)
             System.out.printf("[RawARSC] " + var1 + "\n", var2);
+    }
+
+    static boolean isLogARSCDecoder = true;
+
+    public static void logARSC(String var1, Object... var2) {
+        if (isLogARSCDecoder)
+            System.out.printf("[ARSC] " + var1 + "\n", var2);
     }
 }
