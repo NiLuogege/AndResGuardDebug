@@ -205,7 +205,6 @@ public class ApkDecoder {
   }
 
   public void decode() throws AndrolibException, IOException, DirectoryException {
-    System.out.println("method decode");
 
     //apk中是否包含resources.arsc 文件
     if (hasResources()) {

@@ -20,6 +20,7 @@ package com.tencent.mm.androlib.res.decoder;
 import com.tencent.mm.androlib.AndrolibException;
 import com.tencent.mm.util.ExtDataInput;
 import com.tencent.mm.util.ExtDataOutput;
+import com.tencent.mm.util.Utils;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -82,7 +83,7 @@ public class StringBlock {
         //style起始位置
         int stylesOffset = reader.readInt();
 
-        System.out.printf("字符串值--》块大小= %s 字符串个数= %s style个数= %s 标记个数= %s 字符串起始位是= %s style起始位置= %s \n"
+        Utils.logStringBlock("字符串值--》块大小= %s 字符串个数= %s style个数= %s 标记个数= %s 字符串起始位是= %s style起始位置= %s "
                 , chunkSize, stringCount, styleCount, flags, stringsOffset, stylesOffset);
 
         StringBlock block = new StringBlock();
@@ -91,13 +92,13 @@ public class StringBlock {
         //获取字符串偏移数组
         block.m_stringOffsets = reader.readIntArray(stringCount);
 //        for (int i = 0; i < stringCount; i++) {
-//            System.out.print(block.m_stringOffsets[i] + "\n");
+//            Utils.logStringBlock(block.m_stringOffsets[i] + "");
 //        }
         //创建 存储字符串的 数组,并用-1装满
         block.m_stringOwns = new int[stringCount];
         Arrays.fill(block.m_stringOwns, -1);
 //        for (int i = 0; i < stringCount; i++) {
-//            System.out.print(block.m_stringOwns[i] + "\n");
+//            Utils.logStringBlock(block.m_stringOwns[i] + "");
 //        }
 
 
@@ -118,7 +119,7 @@ public class StringBlock {
             reader.readFully(block.m_strings);
 
 //            for (int i = 0; i < size; i++) {
-//                System.out.print(block.m_strings[i] + "\n");
+//                Utils.logStringBlock(block.m_strings[i] + "");
 //            }
         }
         if (stylesOffset != 0) {
@@ -187,7 +188,7 @@ public class StringBlock {
         out.writeCheckInt(type, CHUNK_STRINGPOOL_TYPE);
         totalSize += 4;
         stringCount = specNames.keySet().size();
-        System.out.println("String pool size: " + stringCount);
+        Utils.logStringBlock("String pool size: " + stringCount);
 
         totalSize += 6 * 4 + 4 * stringCount;
 
@@ -211,7 +212,7 @@ public class StringBlock {
                 // N res entry item point to one string constant
                 // 记录 specName 和 i的关系
                 curSpecNameToPos.put(specName, i);
-//                System.out.printf("curSpecNameToPos put name= %s key= %s,value= %s\n",name,specName,i);
+//                Utils.logStringBlock("curSpecNameToPos put name= %s key= %s,value= %s",name,specName,i);
             }
 
             //写入 混淆过的 资源项名称字符串池 信息
@@ -288,9 +289,9 @@ public class StringBlock {
         StringBlock block = new StringBlock();
         block.m_isUTF8 = (flags & UTF8_FLAG) != 0;
         if (block.m_isUTF8) {
-            System.out.printf("resources.arsc Character Encoding: utf-8\n");
+            Utils.logStringBlock("resources.arsc Character Encoding: utf-8");
         } else {
-            System.out.printf("resources.arsc Character Encoding: utf-16\n");
+            Utils.logStringBlock("resources.arsc Character Encoding: utf-16");
         }
 
         //读取 字符串偏移数组

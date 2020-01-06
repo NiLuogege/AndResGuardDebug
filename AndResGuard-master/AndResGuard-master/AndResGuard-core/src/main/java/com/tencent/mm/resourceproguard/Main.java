@@ -35,13 +35,11 @@ public class Main {
   protected File mOutDir;
 
   public static void gradleRun(InputParam inputParam) {
-    System.out.println("method gradleRun");
     Main m = new Main();
     m.run(inputParam);
   }
 
   private void run(InputParam inputParam) {
-    System.out.println("method run");
     synchronized (Main.class) {
     //将gradle中的设置加载到配置中
       loadConfigFromGradle(inputParam);
@@ -107,7 +105,6 @@ public class Main {
    */
   protected void resourceProguard(
       File outputDir, File outputFile, String apkFilePath, InputParam.SignatureType signatureType, int minSDKVersoin) {
-    System.out.println("method resourceProguard");
 
     File apkFile = new File(apkFilePath);
     if (!apkFile.exists()) {
@@ -133,7 +130,6 @@ public class Main {
 
   private void decodeResource(File outputFile, ApkDecoder decoder, File apkFile)
       throws AndrolibException, IOException, DirectoryException {
-    System.out.println("method decodeResource");
 
     if (outputFile == null) {
       mOutDir = new File(mRunningLocation, apkFile.getName().substring(0, apkFile.getName().indexOf(".apk")));

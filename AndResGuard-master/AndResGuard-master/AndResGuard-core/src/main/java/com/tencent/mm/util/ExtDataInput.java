@@ -52,7 +52,7 @@ public class ExtDataInput extends DataInputDelegate {
 
     public void skipCheckChunkTypeInt(int expected, int possible) throws IOException {
         int got = readInt();
-        System.out.printf("skipCheckChunkTypeInt= %s \n", got);
+        Utils.logStringBlock("skipCheckChunkTypeInt= %s ", got);
         if (got == possible) {
             skipCheckChunkTypeInt(expected, -1);
         } else if (got != expected) {

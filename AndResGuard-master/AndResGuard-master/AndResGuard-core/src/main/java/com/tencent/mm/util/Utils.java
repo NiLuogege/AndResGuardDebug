@@ -187,16 +187,28 @@ public class Utils {
 
 
     static boolean isLogRawARSCDecoder = false;
+    static boolean isLogARSCDecoder = true;
+    static boolean isLogStringBlock = false;
+    static boolean isLogBuildApk = false;
 
     public static void logRawARSC(String var1, Object... var2) {
         if (isLogRawARSCDecoder)
             System.out.printf("[RawARSC] " + var1 + "\n", var2);
     }
 
-    static boolean isLogARSCDecoder = true;
 
     public static void logARSC(String var1, Object... var2) {
         if (isLogARSCDecoder)
             System.out.printf("[ARSC] " + var1 + "\n", var2);
+    }
+
+    public static void logStringBlock(String var1, Object... var2) {
+        if (isLogStringBlock)
+            System.out.printf("[StringBlock] " + var1 + "\n", var2);
+    }
+
+    public static void logBuildApk(String var1, Object... var2) {
+        if (isLogBuildApk)
+            System.out.printf("[BuildApk] " + var1 + "\n", var2);
     }
 }
