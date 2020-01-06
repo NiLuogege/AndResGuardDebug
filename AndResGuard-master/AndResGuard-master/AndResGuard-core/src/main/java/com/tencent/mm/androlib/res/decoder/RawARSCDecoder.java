@@ -48,7 +48,7 @@ public class RawARSCDecoder {
     private static final Logger LOGGER = Logger.getLogger(ARSCDecoder.class.getName());
     private static final int KNOWN_CONFIG_BYTES = 64;
 
-    // 用于存放 typeID 和 对应type 的map
+    // 用于存放 typeID 和 具体内容 的map
     private static HashMap<Integer, Set<String>> mExistTypeNames;
 
     private final CountingInputStream mCountIn;
@@ -82,6 +82,7 @@ public class RawARSCDecoder {
     }
 
     public static Set<String> getExistTypeSpecNameStrings(int type) {
+        Utils.logRawARSC("getExistTypeSpecNameStrings type(typeId)=%s", type);
         return mExistTypeNames.get(type);
     }
 
@@ -416,7 +417,7 @@ public class RawARSCDecoder {
         mExistTypeNames.put(type, names);
 
 //        Utils.logRawARSC("mExistTypeNames put key= %s, value= %s ", type, names);
-        Utils.logRawARSC("mExistTypeNames put key(typeId)= %s", type);
+//        Utils.logRawARSC("mExistTypeNames put key(typeId)= %s", type);
     }
 
     /**
