@@ -187,7 +187,6 @@ public class RawARSCDecoder {
             nextChunk();
         }
         while (mHeader.type == Header.TYPE_TYPE) {
-            Utils.logRawARSC("调用 readConfig");
             readConfig();
             nextChunk();
         }
@@ -220,6 +219,9 @@ public class RawARSCDecoder {
 
         int entryCount = mIn.readInt();
         int entriesStart = mIn.readInt();
+
+        Utils.logRawARSC("readConfig typeId= %s,entryCount= %s", typeId, entryCount);
+
         readConfigFlags();
         int[] entryOffsets = mIn.readIntArray(entryCount);
         for (int i = 0; i < entryOffsets.length; i++) {
@@ -414,6 +416,7 @@ public class RawARSCDecoder {
         mExistTypeNames.put(type, names);
 
 //        Utils.logRawARSC("mExistTypeNames put key= %s, value= %s ", type, names);
+        Utils.logRawARSC("mExistTypeNames put key(typeId)= %s", type);
     }
 
     /**
