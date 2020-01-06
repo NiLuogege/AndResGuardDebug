@@ -134,6 +134,16 @@ public class StringBlock {
         return block;
     }
 
+    /**
+     *
+     * @param reader
+     * @param out
+     * @param specNames  存储的是 已经混淆过的 资源名称字符串池
+     * @param curSpecNameToPos  传进来就是空的 用于记录。。
+     * @return
+     * @throws IOException
+     * @throws AndrolibException
+     */
     public static int writeSpecNameStringBlock(
             ExtDataInput reader, ExtDataOutput out, Map<String, Set<String>> specNames, Map<String, Integer> curSpecNameToPos)
             throws IOException, AndrolibException {
@@ -146,6 +156,7 @@ public class StringBlock {
         // 读 style 个数
         int styleOffsetCount = reader.readInt();
 
+        //这里的 styleOffsetCount 肯定为0吗？ 为啥呢？
         if (styleOffsetCount != 0) {
             throw new AndrolibException(String.format("writeSpecNameStringBlock styleOffsetCount != 0  styleOffsetCount %d",
                     styleOffsetCount
@@ -167,6 +178,7 @@ public class StringBlock {
         if ((size % 4) != 0) {
             throw new IOException("String data size is not multiple of 4 (" + size + ").");
         }
+        //因为style个数==0 所以style偏移数组肯定也不存在 这里直接 读字符串池
         byte[] temp_strings = new byte[size];
         reader.readFully(temp_strings);
         int totalSize = 0;
@@ -178,10 +190,14 @@ public class StringBlock {
         System.out.println("String pool size: " + stringCount);
 
         totalSize += 6 * 4 + 4 * stringCount;
+
+        //读字符串起始位置
         stringsOffset = totalSize;
 
+        //字符串偏移数组
         int[] stringOffsets = new int[stringCount];
         // make twice size buffer for avoiding out of bounds error
+        // 初始化两倍的数组 防止数组越界
         byte[] stringBytes = new byte[size * 2];
         int offset = 0;
         int i = 0;
@@ -189,11 +205,16 @@ public class StringBlock {
 
         for (Iterator<String> it = specNames.keySet().iterator(); it.hasNext(); ) {
             stringOffsets[i] = offset;
+            //name 是 配置的 fixedResName
             String name = it.next();
             for (String specName : specNames.get(name)) {
                 // N res entry item point to one string constant
+                // 记录 specName 和 i的关系
                 curSpecNameToPos.put(specName, i);
+                System.out.printf("curSpecNameToPos put name= %s key= %s,value= %s\n",name,specName,i);
             }
+
+            //写入 混淆过的 资源项名称字符串池 信息
             if (isUTF8) {
                 stringBytes[offset++] = (byte) name.length();
                 stringBytes[offset++] = (byte) name.length();
