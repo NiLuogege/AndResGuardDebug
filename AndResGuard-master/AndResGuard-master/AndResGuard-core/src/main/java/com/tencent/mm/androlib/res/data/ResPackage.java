@@ -27,6 +27,7 @@ public class ResPackage {
 
   //记录 资源id 和 混淆后的文件名称
   private final Map<Integer, String> mSpecNamesReplace;
+  //记录 arsc name列的名称和 混淆后文件名 对应关系
   private final Map<String, Set<String>> mSpecNamesBlock;
   private boolean mCanProguard = false;
 

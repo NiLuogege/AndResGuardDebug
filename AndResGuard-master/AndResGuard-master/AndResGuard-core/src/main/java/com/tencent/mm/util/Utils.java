@@ -186,8 +186,8 @@ public class Utils {
     }
 
 
-    static boolean isLogRawARSCDecoder = true;
-    static boolean isLogARSCDecoder = false;
+    static boolean isLogRawARSCDecoder = false;
+    static boolean isLogARSCDecoder = true;
     static boolean isLogStringBlock = false;
     static boolean isLogBuildApk = false;
 

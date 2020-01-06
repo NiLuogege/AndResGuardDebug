@@ -212,7 +212,7 @@ public class StringBlock {
                 // N res entry item point to one string constant
                 // 记录 specName 和 i的关系
                 curSpecNameToPos.put(specName, i);
-//                Utils.logStringBlock("curSpecNameToPos put name= %s key= %s,value= %s",name,specName,i);
+                Utils.logStringBlock("curSpecNameToPos put name= %s key= %s,value= %s",name,specName,i);
             }
 
             //写入 混淆过的 资源项名称字符串池 信息

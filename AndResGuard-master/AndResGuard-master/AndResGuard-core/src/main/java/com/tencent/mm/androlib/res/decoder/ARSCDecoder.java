@@ -413,6 +413,7 @@ public class ARSCDecoder {
         StringBlock.writeAll(mIn, mOut);
 
         if (mPkgs[mCurPackageID].isCanResguard()) {
+            //混淆SpecName
             int specSizeChange = StringBlock.writeSpecNameStringBlock(mIn,
                     mOut,
                     mPkgs[mCurPackageID].getSpecNamesBlock(),
@@ -702,7 +703,7 @@ public class ARSCDecoder {
         // arsc name列混淆成固定名字, 减少string pool大小
         boolean useFixedName = config.mFixedResName != null && config.mFixedResName.length() > 0;
         String fixedName = useFixedName ? config.mFixedResName : replaceString;
-        // 将 arsc name列的名称和 replaceString进行对应
+        // 将 arsc name列的名称和 混淆后文件名对应
         mPkg.putSpecNamesblock(fixedName, replaceString);
         mType.putSpecResguardName(replaceString);
     }
