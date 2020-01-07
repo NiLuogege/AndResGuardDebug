@@ -55,6 +55,7 @@ public class RawARSCDecoder {
 
     private ExtDataInput mIn;
     private Header mHeader;
+    private StringBlock mTableStrings;
     private StringBlock mTypeNames;
     private StringBlock mSpecNames;
     private ResPackage mPkg;
@@ -93,7 +94,7 @@ public class RawARSCDecoder {
         //解析 package数
         int packageCount = mIn.readInt();
         //解析ResStringPool
-        StringBlock.read(mIn);
+        mTableStrings = StringBlock.read(mIn);
         ResPackage[] packages = new ResPackage[packageCount];
         nextChunk();
         for (int i = 0; i < packageCount; i++) {
@@ -207,10 +208,11 @@ public class RawARSCDecoder {
         mType = new ResType(mTypeNames.getString(id - 1), mPkg);
 
         Utils.logRawARSC("readSingleTableTypeSpec mCurTypeID= %s ,mResId= %s , typeName= %s ,TypeSpecEntryCount=%s ",
-                mCurTypeID, mResId, mType.getName(),entryCount);
+                mCurTypeID, mResId, mType.getName(), entryCount);
     }
 
     private void readConfig() throws IOException, AndrolibException {
+        Utils.logRawARSC("----------readConfig start----------------");
         checkChunkType(Header.TYPE_TYPE);
         int typeId = mIn.readUnsignedByte() - mTypeIdOffset;
 
@@ -232,6 +234,7 @@ public class RawARSCDecoder {
                 readEntry();
             }
         }
+        Utils.logRawARSC("----------readConfig end----------------");
     }
 
     /**
@@ -244,10 +247,13 @@ public class RawARSCDecoder {
         /* size */
         mIn.skipBytes(2);
         short flags = mIn.readShort();
-        //specNamesId(资源项目名称index （下标）) 通过这个再加上 资源项目池 就可以拿到对应 String
+        //specNamesId(资源项目名称index （下标）) 通过这个再加上 资源项目池 就可以拿到对应 文件名如：abc_slide_in_bottom
         int specNamesId = mIn.readInt();
-        Utils.logRawARSC("readEntry putTypeSpecNameStrings typeId(mCurTypeID)= %s, specNamesId= %s", mCurTypeID, specNamesId);
-        putTypeSpecNameStrings(mCurTypeID, mSpecNames.getString(specNamesId));
+        String specNamesString = mSpecNames.getString(specNamesId);
+        putTypeSpecNameStrings(mCurTypeID, specNamesString);
+
+        Utils.logRawARSC("readEntry putTypeSpecNameStrings typeId(mCurTypeID)= %s, specNamesId= %s, specNamesString= %s", mCurTypeID, specNamesId, specNamesString);
+
         boolean readDirect = false;
         if ((flags & ENTRY_FLAG_COMPLEX) == 0) {
             readDirect = true;
@@ -259,6 +265,7 @@ public class RawARSCDecoder {
     }
 
     private void readComplexEntry(boolean flags, int specNamesId) throws IOException, AndrolibException {
+        Utils.logRawARSC("ResTable_map_entry");
         int parent = mIn.readInt();
         int count = mIn.readInt();
         for (int i = 0; i < count; i++) {
@@ -272,8 +279,23 @@ public class RawARSCDecoder {
         mIn.skipCheckShort((short) 8);
         /* zero */
         mIn.skipCheckByte((byte) 0);
-        byte type = mIn.readByte();
+        //数据类型
+        byte dataType = mIn.readByte();
+        //specNamesId(资源项目名称index （下标）) 通过这个再加上 全局资源项目池 就可以拿到对应 文件的全路径 如res/anim/abc_slide_in_bottom.xml
+        //或者 attr内容等
         int data = mIn.readInt();
+
+        //debug加的输出，源码中无
+        if (mCurTypeID < 4) {
+            String typeName = mTypeNames.getString(mCurTypeID - 1);
+            boolean toResguardFile = isToResguardFile(typeName);
+            if (toResguardFile) {
+                Utils.logRawARSC("readValue dataType= %s, mCurTypeID= %s, typeName= %s, data= %s, dataString= %s",
+                        dataType, mCurTypeID, typeName, data, mTableStrings.get(data));
+            }
+        }
+
+
     }
 
     private void readConfigFlags() throws IOException, AndrolibException {
@@ -473,5 +495,12 @@ public class RawARSCDecoder {
             this.offset = offset;
             this.count = count;
         }
+    }
+
+    /**
+     * 为了加速，不需要处理string,id,array，这几个是肯定不是的
+     */
+    private boolean isToResguardFile(String name) {
+        return (!name.equals("string") && !name.equals("id") && !name.equals("array"));
     }
 }
