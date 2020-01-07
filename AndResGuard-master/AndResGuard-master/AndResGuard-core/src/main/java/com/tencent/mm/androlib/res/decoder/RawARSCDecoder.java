@@ -206,8 +206,8 @@ public class RawARSCDecoder {
         mResId = (0xff000000 & mResId) | id << 16;
         mType = new ResType(mTypeNames.getString(id - 1), mPkg);
 
-        Utils.logRawARSC("readSingleTableTypeSpec mCurTypeID= %s ,mResId= %s , typeName= %s ",
-                mCurTypeID, mResId, mType.getName());
+        Utils.logRawARSC("readSingleTableTypeSpec mCurTypeID= %s ,mResId= %s , typeName= %s ,TypeSpecEntryCount=%s ",
+                mCurTypeID, mResId, mType.getName(),entryCount);
     }
 
     private void readConfig() throws IOException, AndrolibException {
@@ -221,7 +221,7 @@ public class RawARSCDecoder {
         int entryCount = mIn.readInt();
         int entriesStart = mIn.readInt();
 
-        Utils.logRawARSC("readConfig typeId= %s,entryCount= %s", typeId, entryCount);
+        Utils.logRawARSC("readConfig typeId= %s,TypeTypeEntryCount= %s", typeId, entryCount);
 
         readConfigFlags();
         //Restable_enty 偏移数组
