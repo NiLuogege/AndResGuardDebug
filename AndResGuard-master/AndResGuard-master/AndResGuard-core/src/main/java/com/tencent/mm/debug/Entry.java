@@ -31,11 +31,12 @@ public class Entry {
                 .setZipAlign("D:/soft/AndroidSDK/build-tools/28.0.3/zipalign")
                 .setSevenZipPath("D:/softCacheData/.gradle/caches/modules-2/files-2.1/com.tencent.mm/SevenZip/1.2.17/4786999cf29d8e3b0c39a80359b5127bda36132a/SevenZip-1.2.17-windows-x86_64.exe")
                 .setOutBuilder("E:/111work/code/code_me/demo/app/build/outputs/apk/release/AndResGuard_app-release")
-                .setApkPath("E:/111work/code//code_me/demo/release/app-release.apk")
                 .setUseSign(true)
                 .setDigestAlg("SHA-1")
                 .setMinSDKVersion(19);
 
+//        builder.setApkPath("E:/111work/code//code_me/demo/release/app-release.apk");
+        builder.setApkPath("D:\\code\\code_work\\ApkDeflated\\ApkDeflated\\apk\\ApkDeflated-1.0.apk");
         builder.setFinalApkBackupPath("E:/111work/code//code_me/demo/release/resGuard/app-release.apk");
 
         builder.setSignFile(new File("E:/111work/code/code_me/demo/keystore/release.keystore"))
