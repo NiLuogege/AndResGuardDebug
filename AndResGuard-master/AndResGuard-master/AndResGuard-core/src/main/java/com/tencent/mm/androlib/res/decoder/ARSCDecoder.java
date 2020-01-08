@@ -523,7 +523,7 @@ public class ARSCDecoder {
     private void initResGuardBuild(int resTypeId) {
         // we need remove string from resguard candidate list if it exists in white list
         HashSet<Pattern> whiteListPatterns = getWhiteList(mType.getName());
-        // init resguard builder （防止 mResguardBuilder 中包含白名单内容？？？）
+        // init resguard builder （防止 mResguardBuilder 中包含白名单内容）
         mResguardBuilder.reset(whiteListPatterns);
         //避免 混淆后有重复的 String，所以要剔除 重复的名字
         mResguardBuilder.removeStrings(RawARSCDecoder.getExistTypeSpecNameStrings(resTypeId));
