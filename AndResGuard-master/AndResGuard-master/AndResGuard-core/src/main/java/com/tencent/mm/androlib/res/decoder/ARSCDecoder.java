@@ -134,7 +134,7 @@ public class ARSCDecoder {
     }
 
     /**
-     * 做一些混淆前准备工作
+     * 做一些混淆前准备工作 和 混淆文件名称及路径
      *
      * @throws IOException
      * @throws AndrolibException
