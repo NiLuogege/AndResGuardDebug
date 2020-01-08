@@ -502,7 +502,7 @@ public class ARSCDecoder {
             mCurrTypeID = id;
             initResGuardBuild(mCurrTypeID);
         }
-        // 是否混淆文件路径
+        // 是否需要混淆混淆
         mShouldResguardForType = isToResguardFile(mTypeNames.getString(id - 1));
 
         // 对，这里是用来描述差异性的！！！（跳过 资源 spce 数组）
