@@ -841,7 +841,9 @@ public class ARSCDecoder {
                         ));
                     }
                     if (filterInfo == null) {
+                        //将没有混淆的文件内容 copy 到混淆的文件中
                         FileOperation.copyFileUsingStream(resRawFile, resDestFile);
+                        Utils.logARSC("resRawFile= %s \n resDestFile= %s",resRawFile,resDestFile);
                     }
                     //already copied
                     mApkDecoder.removeCopiedResFile(resRawFile.toPath());
