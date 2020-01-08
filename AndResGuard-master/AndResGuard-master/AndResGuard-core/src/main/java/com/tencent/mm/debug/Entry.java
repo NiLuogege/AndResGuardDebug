@@ -14,6 +14,7 @@ public class Entry {
 
         ArrayList<String> whiteListFullName = new ArrayList<>();
         whiteListFullName.add("cn.xianghuanji.demo_andresguard.R.mipmap.ic_launcher");
+        whiteListFullName.add("com.xianghuanji.apkdeflated.R.anim.**");
 
         ArrayList<String> compressFilePattern = new ArrayList<>();
         compressFilePattern.add("*.png");
