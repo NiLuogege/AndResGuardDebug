@@ -633,7 +633,7 @@ public class ARSCDecoder {
     }
 
     /**
-     * deal with whitelist
+     * 处理白名单里的资源
      *
      * @param specNamesId resource spec name id
      * @param config      {@Configuration} AndResGuard configuration
@@ -657,6 +657,7 @@ public class ARSCDecoder {
                         mPkg.putSpecNamesblock(specName, specName);
                         mResguardBuilder.setInWhiteList(mCurEntryID);
 
+                        //用来确定没有 重复的资源名 如果有就报错
                         mType.putSpecResguardName(specName);
                         return true;
                     }
@@ -666,6 +667,13 @@ public class ARSCDecoder {
         return false;
     }
 
+    /**
+     * 处理非白名单资源
+     * @param specNamesId
+     * @param config
+     * @throws AndrolibException
+     * @throws IOException
+     */
     private void dealWithNonWhiteList(int specNamesId, Configuration config) throws AndrolibException, IOException {
         String replaceString = null;
         boolean keepMapping = false;
