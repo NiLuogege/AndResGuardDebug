@@ -4,4 +4,4 @@
 __AndResGuard源码的版本是1.2.17__
 
 ## 阅读笔记
-http://note.youdao.com/noteshare?id=e683b9a0de06e59e0c8bd8544fbf7a6a&sub=CE6CEA58F52F4D46B6887363AAB2884D
+[rsources.arsc格式详解（2020年）](https://www.jianshu.com/p/8681333a9a19)
